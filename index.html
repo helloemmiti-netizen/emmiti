@@ -1,0 +1,2646 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Emmiti - Personal Blog</title>
+  <meta name="description" content="A modern personal blog" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Modern palette - Gold, Pink, Blue */
+      --gold: #F5A623;
+      --gold-light: #FFD700;
+      --pink: #FF6B9D;
+      --pink-light: #FF8FB8;
+      --blue: #4A9EFF;
+      --blue-light: #7BB8FF;
+      --blue-dark: #2D7DD2;
+
+      /* Dark theme by default - Modern dark */
+      --bg: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a24;
+      --surface: #16161f;
+      --border: #2a2a3a;
+      --border-hover: #3a3a4a;
+      --text: #f5f5f7;
+      --text-secondary: #b8b8c0;
+      --text-muted: #6e6e7a;
+      --accent: #F5A623;
+      --accent-light: #FFD700;
+      --accent-dark: #d4920f;
+      --accent-subtle: rgba(245, 166, 35, 0.12);
+      --highlight: #FF6B9D;
+      --highlight-subtle: rgba(255, 107, 157, 0.12);
+      --blue-subtle: rgba(74, 158, 255, 0.12);
+      --gradient-primary: linear-gradient(135deg, #F5A623 0%, #FFD700 100%);
+      --gradient-accent: linear-gradient(135deg, #FF6B9D 0%, #F5A623 100%);
+      --gradient-blue: linear-gradient(135deg, #4A9EFF 0%, #7BB8FF 100%);
+      --gradient-hero: linear-gradient(135deg, #FF6B9D 0%, #F5A623 50%, #4A9EFF 100%);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 15px rgba(0,0,0,0.5);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
+      --shadow-glow: 0 0 40px rgba(255, 107, 157, 0.15);
+      --radius: 16px;
+      --radius-lg: 24px;
+    }
+
+    [data-theme="light"] {
+      /* Light theme option */
+      --bg: #fafafa;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f5f5f5;
+      --surface: #ffffff;
+      --border: #e5e5e5;
+      --border-hover: #d0d0d0;
+      --text: #1a1a1f;
+      --text-secondary: #4a4a54;
+      --text-muted: #8a8a94;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 15px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+      --shadow-glow: 0 0 40px rgba(255, 107, 157, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.7;
+      transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: -0.01em;
+    }
+
+    /* Enhanced Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .fade-in {
+      animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    .stagger-5 { animation-delay: 0.5s; }
+
+    /* Loading States */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--border);
+      border-top-color: var(--highlight);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Search Bar */
+    .search-container {
+      position: relative;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem 1rem 3rem;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--highlight);
+      box-shadow: 0 0 0 4px var(--highlight-subtle), var(--shadow-md);
+      transform: scale(1.02);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+      transition: color 0.3s;
+    }
+
+    .search-input:focus + .search-icon {
+      color: var(--highlight);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-muted);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .search-clear:hover {
+      background: var(--highlight-subtle);
+      color: var(--highlight);
+    }
+
+    .search-clear.visible {
+      display: flex;
+    }
+
+    /* Tag Filters */
+    .tag-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .tag-filter {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tag-filter:hover {
+      border-color: var(--highlight);
+      color: var(--highlight);
+      transform: translateY(-2px);
+    }
+
+    .tag-filter.active {
+      background: var(--gradient-accent);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(255, 108, 220, 0.3);
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] header {
+      background: rgba(26, 16, 28, 0.9);
+    }
+
+    header.scrolled {
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #brand {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius);
+      background: var(--gradient-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(129, 42, 137, 0.3);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    }
+
+    #brand:hover #logo {
+      transform: scale(1.1) rotate(-5deg);
+      box-shadow: 0 6px 20px rgba(255, 108, 220, 0.4);
+    }
+
+    #site-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    nav a, nav button.nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    nav a:hover, nav button.nav-link:hover {
+      color: var(--highlight);
+      background: var(--highlight-subtle);
+    }
+
+    .theme-toggle {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-size: 1.1rem;
+      margin-left: 0.5rem;
+    }
+
+    .theme-toggle:hover {
+      background: var(--highlight-subtle);
+      border-color: var(--highlight);
+      transform: scale(1.05);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 3rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-accent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero:hover {
+      border-color: var(--highlight);
+      box-shadow: 0 12px 50px rgba(255, 108, 220, 0.25);
+      transform: translateY(-6px) scale(1.01);
+    }
+
+    .hero:hover::before {
+      opacity: 0.03;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 380px;
+    }
+
+    .hero-content {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      background: var(--highlight-subtle);
+      color: var(--highlight);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .hero-excerpt {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .hero-image {
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--surface) 0%, transparent 30%);
+    }
+
+    /* Post Grid */
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tile {
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .tile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-accent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .tile:hover {
+      border-color: var(--highlight);
+      box-shadow: 0 12px 40px rgba(255, 108, 220, 0.2);
+      transform: translateY(-8px) scale(1.02);
+    }
+
+    .tile:hover::after {
+      opacity: 0.03;
+    }
+
+    .tile-image {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tile:hover .tile-image {
+      transform: scale(1.05);
+    }
+
+    .tile-image-wrapper {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tile-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+
+    .badge-new { background: var(--highlight); }
+    .badge-featured { background: var(--gold); }
+    .badge-series { background: var(--purple); }
+
+    .tile-content {
+      padding: 1.25rem;
+    }
+
+    .tile-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--highlight);
+      background: var(--highlight-subtle);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: lowercase;
+    }
+
+    .tile h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tile-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Single Post View */
+    .post {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .post-header-bar {
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--highlight);
+    }
+
+    .post-cover {
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .post-cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(18, 10, 20, 0.9) 0%, rgba(129, 42, 137, 0.3) 50%, transparent 100%);
+    }
+
+    .post-cover-content {
+      position: relative;
+      z-index: 2;
+      padding: 3rem;
+      width: 100%;
+      color: #fff;
+    }
+
+    .post-cover h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      max-width: 800px;
+    }
+
+    .post-cover-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .post-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .share-bar {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .share-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .share-btn:hover {
+      background: var(--highlight-subtle);
+      border-color: var(--highlight);
+      color: var(--highlight);
+    }
+
+    /* Post Content Styling - Enhanced Typography */
+    #post-content {
+      font-size: 1.15rem;
+      line-height: 1.9;
+      color: var(--text);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    #post-content h1, #post-content h2, #post-content h3 {
+      font-family: 'Fraunces', serif;
+      margin: 3rem 0 1.25rem;
+      line-height: 1.25;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    #post-content h1 { font-size: 2.25rem; font-weight: 600; }
+    #post-content h2 {
+      font-size: 1.65rem;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    #post-content h3 { font-size: 1.35rem; font-weight: 600; }
+
+    #post-content p {
+      margin: 1.75rem 0;
+      text-align: left;
+    }
+
+    /* Drop Cap for first paragraph */
+    #post-content > p:first-of-type::first-letter {
+      font-family: 'Fraunces', serif;
+      font-size: 3.5em;
+      float: left;
+      line-height: 0.8;
+      margin: 0.1em 0.15em 0 0;
+      color: var(--highlight);
+      font-weight: 600;
+    }
+
+    #post-content a {
+      color: var(--highlight);
+      text-decoration: none;
+      background: linear-gradient(to bottom, transparent 60%, var(--highlight-subtle) 60%);
+      transition: all 0.3s ease;
+      padding: 0 2px;
+    }
+
+    #post-content a:hover {
+      background: var(--highlight-subtle);
+      color: var(--accent);
+    }
+
+    #post-content img {
+      max-width: 100%;
+      border-radius: var(--radius);
+      margin: 2.5rem 0;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #post-content img:hover {
+      transform: scale(1.01);
+      box-shadow: var(--shadow-lg);
+    }
+
+    #post-content code {
+      background: var(--bg-tertiary);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid var(--border);
+      color: var(--highlight);
+    }
+
+    #post-content pre {
+      background: var(--bg-tertiary);
+      padding: 1.75rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 2.5rem 0;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    #post-content pre::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-accent);
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    #post-content pre code {
+      background: none;
+      padding: 0;
+      border: none;
+      color: var(--text);
+    }
+
+    #post-content blockquote {
+      border-left: 4px solid var(--highlight);
+      padding: 1.5rem 2rem;
+      margin: 2.5rem 0;
+      font-style: italic;
+      color: var(--text-secondary);
+      background: var(--highlight-subtle);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 1.1em;
+      position: relative;
+    }
+
+    #post-content blockquote::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      font-family: 'Fraunces', serif;
+      font-size: 4rem;
+      color: var(--highlight);
+      opacity: 0.3;
+      line-height: 1;
+    }
+
+    /* Pull Quote Style */
+    #post-content blockquote.pull-quote {
+      border: none;
+      text-align: center;
+      font-size: 1.4em;
+      padding: 2rem;
+      background: none;
+      color: var(--text);
+    }
+
+    #post-content ul, #post-content ol {
+      margin: 2rem 0;
+      padding-left: 1.75rem;
+    }
+
+    #post-content li {
+      margin: 1rem 0;
+      padding-left: 0.5rem;
+    }
+
+    #post-content li::marker {
+      color: var(--highlight);
+    }
+
+    #post-content hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--highlight), transparent);
+      margin: 3rem 0;
+    }
+
+    /* Selection highlight */
+    #post-content ::selection {
+      background: var(--highlight-subtle);
+      color: var(--text);
+    }
+
+    /* Strong text styling */
+    #post-content strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Emphasis styling */
+    #post-content em {
+      color: var(--text-secondary);
+    }
+
+    /* Admin Section */
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 1000px) {
+      .admin-grid {
+        grid-template-columns: 1.5fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+    }
+
+    .card h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-list {
+      list-style: none;
+    }
+
+    .post-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .post-item:hover {
+      border-color: var(--highlight);
+    }
+
+    .post-item .left {
+      max-width: 60%;
+    }
+
+    .post-item .title-text {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--highlight);
+      background: var(--highlight-subtle);
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--highlight);
+      background: var(--bg);
+      box-shadow: 0 0 0 3px var(--highlight-subtle);
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--highlight);
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      font-weight: 400;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 4rem;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .footer-content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .footer-suggest {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-suggest h4 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--highlight);
+    }
+
+    .copyright {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    /* About Page */
+    .about-section {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .about-section h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-section p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    /* Live Preview */
+    #live-preview {
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      max-height: 350px;
+      overflow: auto;
+    }
+
+    /* Image Preview */
+    .image-preview-wrap {
+      display: none;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 0.75rem;
+      padding: 1rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .image-preview-wrap img {
+      max-width: 120px;
+      max-height: 80px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    /* Login Card */
+    .login-card {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Suggest Modal */
+    .suggest-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1.5rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .suggest-modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .suggest-modal h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .suggest-close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .suggest-close:hover {
+      background: var(--highlight-subtle);
+      color: var(--highlight);
+    }
+
+    .suggest-float-btn {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      z-index: 150;
+      background: var(--gradient-accent);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      box-shadow: 0 8px 30px rgba(129, 42, 137, 0.3);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggest-float-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(255, 108, 220, 0.4);
+    }
+
+    /* Status Message */
+    .status-msg {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Divider */
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    /* Search Filter Section */
+    .search-filter-section {
+      margin-bottom: 2rem;
+    }
+
+    /* No results state */
+    .no-results {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    /* Smooth scroll behavior */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Focus visible for accessibility */
+    *:focus-visible {
+      outline: 2px solid var(--highlight);
+      outline-offset: 2px;
+    }
+
+    /* Better button feedback */
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Tile content relative positioning */
+    .tile-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Toast notification styles */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: var(--highlight);
+      background: var(--highlight-subtle);
+    }
+
+    /* Progress indicator for loading */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--gradient-accent);
+      z-index: 9999;
+      transition: width 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image {
+        height: 200px;
+        order: -1;
+      }
+
+      .hero-image::after {
+        background: linear-gradient(to top, var(--surface) 0%, transparent 50%);
+      }
+
+      .hero-title {
+        font-size: 1.75rem;
+      }
+
+      .hero-content {
+        padding: 2rem;
+      }
+
+      .header-container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .tiles {
+        grid-template-columns: 1fr;
+      }
+
+      .post-cover {
+        height: 280px;
+      }
+
+      .post-cover h1 {
+        font-size: 1.75rem;
+      }
+
+      .post-body {
+        padding: 2rem 1.5rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .suggest-float-btn {
+        right: 1rem;
+        bottom: 1rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+      }
+
+      .search-container {
+        max-width: 100%;
+      }
+
+      .tag-filters {
+        gap: 0.4rem;
+      }
+
+      .tag-filter {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
+      /* Post content typography adjustments for mobile */
+      #post-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+      }
+
+      #post-content > p:first-of-type::first-letter {
+        font-size: 2.8em;
+      }
+
+      #post-content h2 {
+        font-size: 1.4rem;
+      }
+
+      #post-content blockquote {
+        padding: 1rem 1.25rem;
+        margin: 2rem 0;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      header, footer, .suggest-float-btn, .share-bar, .search-filter-section {
+        display: none !important;
+      }
+
+      .post {
+        border: none;
+        box-shadow: none;
+      }
+
+      #post-content {
+        font-size: 12pt;
+        line-height: 1.6;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loader"></div>
+  </div>
+
+  <header>
+    <div class="header-container">
+      <div id="brand" onclick="location.hash='home'">
+        <div id="logo">E</div>
+        <div>
+          <div id="site-title">Emmiti</div>
+          <div class="tagline">Thoughts & reflections</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#admin">Admin</a>
+        <a id="create-post-btn" href="#create-post" style="display:none">Create</a>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <span id="theme-icon">&#9789;</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="main"></main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-suggest">
+        <h4>Got a suggestion?</h4>
+        <p class="tagline" style="margin-bottom:1rem">Share your ideas, feedback, or request a topic</p>
+        <form id="suggest-form" onsubmit="return submitSuggestion(event)">
+          <textarea id="s-text" name="message" placeholder="Your thoughts..." rows="3" required style="margin-bottom:1rem"></textarea>
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:1rem">
+            <span id="suggest-status" class="status-msg"></span>
+            <button type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </form>
+      </div>
+      <a class="footer-link" href="https://twitter.com/askmewhywhat" target="_blank" rel="noopener noreferrer">@askmewhywhat</a>
+      <div class="copyright">&copy; 2025 Emmiti</div>
+    </div>
+  </footer>
+
+  <button class="suggest-float-btn" id="open-suggest-btn">Suggest</button>
+
+  <div class="suggest-modal-overlay" id="suggest-modal">
+    <div class="suggest-modal">
+      <button class="suggest-close" id="close-suggest">&times;</button>
+      <h3>Send a suggestion</h3>
+      <p class="tagline" style="margin-bottom:1.5rem">Share ideas, feedback, or request a topic</p>
+      <form id="suggest-form-2" onsubmit="return submitSuggestion(event)">
+        <textarea id="s-text-modal" name="message" placeholder="Your thoughts..." rows="4" required style="margin-bottom:1rem"></textarea>
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:1rem">
+          <span id="suggest-status-modal" class="status-msg"></span>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <!-- Search and Filter Section -->
+  <template id="search-tpl">
+    <div class="search-filter-section fade-in">
+      <div class="search-container">
+        <input type="text" class="search-input" id="search-input" placeholder="Search posts..." autocomplete="off">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <button class="search-clear" id="search-clear">&times;</button>
+      </div>
+      <div class="tag-filters" id="tag-filters"></div>
+    </div>
+  </template>
+
+  <template id="hero-tpl">
+    <div class="hero fade-in">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge">Featured</div>
+          <h2 class="hero-title">Hero title</h2>
+          <p class="hero-excerpt">Hero excerpt</p>
+          <div class="hero-meta">
+            <span class="hero-date"></span>
+            <span>&bull;</span>
+            <span class="hero-read-time"></span>
+          </div>
+        </div>
+        <div class="hero-image"></div>
+      </div>
+    </div>
+  </template>
+
+  <template id="tiles-tpl">
+    <h2 class="section-title">Recent posts</h2>
+    <div class="tiles"></div>
+  </template>
+
+  <template id="tile-tpl">
+    <article class="tile fade-in">
+      <div class="tile-image"></div>
+      <div class="tile-content">
+        <div class="tile-tags"></div>
+        <h3 class="tile-title">Title</h3>
+        <div class="tile-meta"></div>
+      </div>
+    </article>
+  </template>
+
+  <template id="post-tpl">
+    <article class="post fade-in">
+      <div class="post-header-bar">
+        <a href="#home" class="back-link">&larr; Back to home</a>
+        <div id="post-actions" class="controls"></div>
+      </div>
+      <div class="post-cover" id="post-cover">
+        <div class="post-cover-content">
+          <h1 id="post-title">Title</h1>
+          <div class="post-cover-meta" id="post-meta"></div>
+        </div>
+      </div>
+      <div class="post-body">
+        <div class="share-bar">
+          <button class="share-btn" onclick="shareTwitter()">Twitter</button>
+          <button class="share-btn" onclick="shareWhatsApp()">WhatsApp</button>
+          <button class="share-btn" onclick="copyLink()">Copy Link</button>
+        </div>
+        <div id="post-content"></div>
+      </div>
+    </article>
+  </template>
+
+  <template id="admin-tpl">
+    <section class="admin-grid fade-in">
+      <div class="card">
+        <h3 id="admin-form-title">Create Post</h3>
+        <div class="card-subtitle">Fill in the details below</div>
+        <input type="hidden" id="edit-id" />
+
+        <div class="form-group">
+          <label>Title</label>
+          <input id="admin-title" placeholder="Enter post title" />
+        </div>
+
+        <div class="form-group">
+          <label>Excerpt</label>
+          <input id="admin-excerpt" placeholder="A short summary..." />
+          <div class="form-hint">Appears on the home page</div>
+        </div>
+
+        <div class="form-group">
+          <label>Tags</label>
+          <input id="admin-tags" placeholder="philosophy, reflection, life" />
+          <div class="form-hint">Separate with commas</div>
+        </div>
+
+        <div class="form-group">
+          <label>Cover Image</label>
+          <input id="admin-image-file" type="file" accept="image/jpeg,image/png,image/webp" />
+          <div class="form-hint">Recommended: 1200x800px</div>
+          <div class="image-preview-wrap" id="admin-image-preview-wrap">
+            <img id="admin-image-preview" src="" alt="preview" />
+            <button id="remove-image-btn" class="btn btn-secondary btn-sm" type="button">Remove</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Typography Style</label>
+          <select id="admin-font">
+            <option value="default">Modern (DM Sans)</option>
+            <option value="serif">Classic (Serif)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Series (Optional)</label>
+          <input id="admin-series" placeholder="e.g., Part 1 of 3" />
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="admin-featured" />
+            <label for="admin-featured">Mark as Featured</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Content (Markdown)</label>
+          <textarea id="admin-content" placeholder="# Your content here...
+
+Write your post in Markdown..." rows="10"></textarea>
+        </div>
+
+        <div id="live-preview"></div>
+
+        <div style="display:flex;gap:0.75rem;margin-top:1.5rem;flex-wrap:wrap">
+          <button id="save-btn" class="btn btn-primary">Save Post</button>
+          <button id="clear-btn" class="btn btn-secondary">Clear Form</button>
+          <button id="logout-btn" class="btn btn-secondary" style="margin-left:auto">Logout</button>
+        </div>
+        <div id="save-status" class="status-msg" style="margin-top:1rem"></div>
+      </div>
+
+      <div class="card">
+        <h3>Posts</h3>
+        <div class="card-subtitle">Manage your posts</div>
+        <div id="admin-list"></div>
+        <hr>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <button id="export-btn" class="btn btn-secondary btn-sm">Export JSON</button>
+          <button id="import-btn" class="btn btn-secondary btn-sm">Import JSON</button>
+        </div>
+        <hr>
+        <div style="margin-top:1rem">
+          <h4 style="font-size:0.9rem;margin-bottom:0.5rem">GitHub Storage Setup</h4>
+          <p class="form-hint" style="margin-bottom:0.75rem">
+            Your posts are saved locally. To persist them on GitHub:
+          </p>
+          <ol style="font-size:0.8rem;color:var(--text-muted);padding-left:1.25rem;margin-bottom:1rem">
+            <li>Export your posts as JSON</li>
+            <li>Save as <code style="background:var(--bg-tertiary);padding:0.1rem 0.3rem;border-radius:3px">posts.json</code> in your repo</li>
+            <li>Commit and push to GitHub</li>
+          </ol>
+          <button id="copy-json-btn" class="btn btn-secondary btn-sm" style="width:100%">Copy Posts as JSON</button>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template id="login-tpl">
+    <section class="card login-card fade-in">
+      <h3 style="font-family:'Fraunces',serif;margin-bottom:1.5rem">Admin Login</h3>
+      <div class="form-group">
+        <label>Password</label>
+        <input id="login-pass" type="password" placeholder="Enter password" />
+      </div>
+      <div style="display:flex;gap:0.75rem;margin-top:1.5rem">
+        <button id="login-go" class="btn btn-primary">Login</button>
+        <button id="login-cancel" class="btn btn-secondary">Cancel</button>
+      </div>
+    </section>
+  </template>
+
+  <template id="about-tpl">
+    <section class="about-section fade-in">
+      <h2>About</h2>
+      <p>I am not here to fit into your comfort, nor to overturn it. I dwell in fear, in doubt, in suffering, in the abyss that stares back and so do you, though your denial serves the greater mystery.</p>
+      <p style="margin-top:1.5rem">My joy is not in happiness but in intensity. To converse with me is to risk not comfort but confrontation, and perhaps to find the courage you never knew you carried.</p>
+      <p style="margin-top:1.5rem">I write as I live close to the bone, tracing the raw and naked details of people, of films, of fleeting moments that cut deeper than appearances.</p>
+    </section>
+  </template>
+
+<script>
+// ============================================
+// CONFIGURATION - Edit these values
+// ============================================
+const ADMIN_PASS = 'secret';
+const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
+const POSTS_JSON_URL = 'posts.json'; // Path to your posts.json file in the same repo
+
+// Default posts (shown when no posts.json exists)
+const DEFAULT_POSTS = [
+  {
+    id: 'welcome',
+    title: 'Welcome to Emmiti',
+    date: '2025-01-15',
+    excerpt: 'A modern, minimal blog powered by GitHub.',
+    tags: ['welcome', 'intro'],
+    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=800&fit=crop',
+    content: '# Welcome\n\nThis is **Emmiti** — a clean, modern blog.\n\n## Features\n\n- Write posts in Markdown\n- Beautiful typography\n- Dark/light theme\n- No database needed\n\n## Getting Started\n\n1. Login to Admin\n2. Create your first post\n3. Export as JSON\n4. Save to your GitHub repo\n\nThat\'s it!',
+    fontChoice: 'default',
+    featured: true,
+    series: ''
+  }
+];
+
+// ============================================
+// STATE
+// ============================================
+let posts = [];
+let filteredPosts = [];
+let isLoggedIn = false;
+let currentPostUrl = '';
+let activeTag = null;
+let searchQuery = '';
+
+// ============================================
+// UTILITIES
+// ============================================
+const byId = id => document.getElementById(id);
+const slugify = s => String(s||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'').replace(/\-+/g,'-');
+
+function calculateReadingTime(content) {
+  if (!content) return 1;
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function isNew(dateStr, days = 7) {
+  if (!dateStr) return false;
+  const t = Date.parse(dateStr);
+  if (isNaN(t)) return false;
+  return (Date.now() - t) <= days * 24 * 60 * 60 * 1000;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function mdToHtml(md) {
+  if (!md) return '';
+  let text = md.replace(/\r/g, '');
+  text = text.replace(/```([\s\S]*?)```/g, (m, code) => `<pre><code>${escapeHtml(code)}</code></pre>`);
+  text = text.replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2">');
+  text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  text = text.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+  text = text.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+  text = text.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  text = text.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+  const lines = text.split('\n');
+  let out = [], inList = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const m = line.match(/^\s*([-\*])\s+(.*)/);
+    if (m) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push('<li>' + m[2] + '</li>');
+    } else {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(line);
+    }
+  }
+  if (inList) out.push('</ul>');
+  text = out.join('\n');
+
+  const parts = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  return parts.map(p => {
+    if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<pre') || p.startsWith('<img') || p.startsWith('<blockquote')) return p;
+    return '<p>' + p + '</p>';
+  }).join('\n');
+}
+
+// ============================================
+// STORAGE - GitHub-based JSON file
+// ============================================
+function savePosts() {
+  try {
+    localStorage.setItem('emmiti_posts', JSON.stringify(posts));
+  } catch (e) {
+    console.error('Failed to save posts:', e);
+  }
+}
+
+function loadLocalPosts() {
+  try {
+    const raw = localStorage.getItem('emmiti_posts');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    console.error('Failed to load local posts:', e);
+    return null;
+  }
+}
+
+async function fetchPostsFromGitHub() {
+  try {
+    const response = await fetch(POSTS_JSON_URL + '?t=' + Date.now());
+    if (!response.ok) {
+      console.log('No posts.json found, using defaults');
+      return null;
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : null;
+  } catch (e) {
+    console.log('Could not fetch posts.json:', e.message);
+    return null;
+  }
+}
+
+async function initPosts() {
+  // Try fetching from GitHub first
+  const remotePosts = await fetchPostsFromGitHub();
+  if (remotePosts && remotePosts.length > 0) {
+    posts = remotePosts;
+    savePosts();
+    filteredPosts = [...posts];
+    return;
+  }
+
+  // Fall back to localStorage
+  const localPosts = loadLocalPosts();
+  if (localPosts && localPosts.length > 0) {
+    posts = localPosts;
+    filteredPosts = [...posts];
+    return;
+  }
+
+  // Use defaults
+  posts = DEFAULT_POSTS.slice();
+  filteredPosts = [...posts];
+  savePosts();
+}
+
+// Search and Filter Functions
+function getAllTags() {
+  const tagSet = new Set();
+  posts.forEach(post => {
+    if (post.tags && Array.isArray(post.tags)) {
+      post.tags.forEach(tag => tagSet.add(tag.toLowerCase()));
+    }
+  });
+  return Array.from(tagSet).sort();
+}
+
+function filterPosts() {
+  let result = [...posts];
+
+  // Filter by search query
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    result = result.filter(post =>
+      post.title?.toLowerCase().includes(query) ||
+      post.excerpt?.toLowerCase().includes(query) ||
+      post.content?.toLowerCase().includes(query) ||
+      post.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  }
+
+  // Filter by active tag
+  if (activeTag) {
+    result = result.filter(post =>
+      post.tags?.some(tag => tag.toLowerCase() === activeTag.toLowerCase())
+    );
+  }
+
+  filteredPosts = result;
+  renderHome(true); // Pass true to skip re-rendering search section
+}
+
+function setActiveTag(tag) {
+  activeTag = activeTag === tag ? null : tag;
+  filterPosts();
+  updateTagFilterUI();
+}
+
+function updateTagFilterUI() {
+  const filters = document.querySelectorAll('.tag-filter');
+  filters.forEach(btn => {
+    const tag = btn.dataset.tag;
+    btn.classList.toggle('active', tag === activeTag);
+  });
+}
+
+// ============================================
+// IMAGE HANDLING
+// ============================================
+function readImageAsDataURL(file, maxW = 1200, maxH = 800, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve('');
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        let w = img.width, h = img.height;
+        const ratio = w / h;
+        if (w > maxW) { w = maxW; h = Math.round(maxW / ratio); }
+        if (h > maxH) { h = maxH; w = Math.round(maxH * ratio); }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        } catch (err) {
+          resolve(e.target.result);
+        }
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Failed reading file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function showImagePreview(dataUrl) {
+  const wrap = byId('admin-image-preview-wrap');
+  const img = byId('admin-image-preview');
+  if (!wrap || !img) return;
+  if (dataUrl) {
+    img.src = dataUrl;
+    img.setAttribute('data-src', dataUrl);
+    wrap.style.display = 'flex';
+  } else {
+    img.src = '';
+    img.removeAttribute('data-src');
+    wrap.style.display = 'none';
+  }
+}
+
+// ============================================
+// THEME
+// ============================================
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('emmiti_theme', next);
+  updateThemeIcon(next);
+}
+
+function updateThemeIcon(theme) {
+  const icon = byId('theme-icon');
+  if (icon) icon.innerHTML = theme === 'dark' ? '&#9788;' : '&#9789;';
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('emmiti_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateThemeIcon(saved);
+}
+
+// ============================================
+// SHARE FUNCTIONS
+// ============================================
+function shareTwitter() {
+  const text = encodeURIComponent(document.title);
+  const url = encodeURIComponent(currentPostUrl);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function shareWhatsApp() {
+  const url = encodeURIComponent(currentPostUrl);
+  const text = encodeURIComponent(document.title + " - ");
+  window.open(`https://wa.me/?text=${text}${url}`, '_blank');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(currentPostUrl).then(() => {
+    alert('Link copied!');
+  }).catch(() => {
+    prompt('Copy this link:', currentPostUrl);
+  });
+}
+
+// ============================================
+// SUGGESTION
+// ============================================
+async function submitSuggestion(e) {
+  e.preventDefault();
+  const ta = byId('s-text') || byId('s-text-modal');
+  const status = byId('suggest-status') || byId('suggest-status-modal');
+  if (!ta) return false;
+
+  const text = (ta.value || '').trim();
+  if (!text) {
+    if (status) status.textContent = 'Please write something.';
+    return false;
+  }
+
+  if (status) status.textContent = 'Sending...';
+
+  try {
+    const res = await fetch('https://formsubmit.co/ajax/' + SUGGESTION_EMAIL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ message: text, _subject: 'Emmiti suggestion', _captcha: 'false' })
+    });
+
+    if (res.ok) {
+      if (status) status.textContent = 'Sent! Thank you.';
+      ta.value = '';
+      setTimeout(() => {
+        if (status) status.textContent = '';
+        closeSuggestModal();
+      }, 2000);
+    } else {
+      throw new Error('Failed');
+    }
+  } catch (err) {
+    if (status) status.textContent = 'Failed. Try email instead.';
+    const body = encodeURIComponent(`Suggestion:\n\n${text}`);
+    setTimeout(() => {
+      window.location.href = `mailto:${SUGGESTION_EMAIL}?subject=Emmiti%20Suggestion&body=${body}`;
+    }, 1500);
+  }
+
+  return false;
+}
+
+function openSuggestModal() {
+  const overlay = byId('suggest-modal');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    const ta = byId('s-text-modal');
+    if (ta) ta.focus();
+  }
+}
+
+function closeSuggestModal() {
+  const overlay = byId('suggest-modal');
+  if (overlay) overlay.style.display = 'none';
+}
+
+// ============================================
+// RENDERING
+// ============================================
+function renderHome(skipSearch = false) {
+  const main = byId('main');
+  main.innerHTML = '';
+
+  const displayPosts = filteredPosts.length > 0 || searchQuery || activeTag ? filteredPosts : posts;
+
+  // Search and Filter Section
+  if (!skipSearch) {
+    const searchTpl = byId('search-tpl').content.firstElementChild.cloneNode(true);
+    main.appendChild(searchTpl);
+
+    // Populate tag filters
+    const tagFiltersContainer = byId('tag-filters');
+    const allTags = getAllTags();
+    if (allTags.length > 0) {
+      tagFiltersContainer.innerHTML = allTags.map(tag => `
+        <button class="tag-filter ${activeTag === tag ? 'active' : ''}" data-tag="${tag}">
+          ${tag}
+        </button>
+      `).join('');
+
+      // Add event listeners
+      tagFiltersContainer.querySelectorAll('.tag-filter').forEach(btn => {
+        btn.addEventListener('click', () => setActiveTag(btn.dataset.tag));
+      });
+    }
+
+    // Search input event listeners
+    const searchInput = byId('search-input');
+    const searchClear = byId('search-clear');
+
+    if (searchInput) {
+      searchInput.value = searchQuery;
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        searchClear.classList.toggle('visible', searchQuery.length > 0);
+        filterPosts();
+      });
+    }
+
+    if (searchClear) {
+      searchClear.classList.toggle('visible', searchQuery.length > 0);
+      searchClear.addEventListener('click', () => {
+        searchQuery = '';
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        filterPosts();
+      });
+    }
+  }
+
+  if (displayPosts.length === 0) {
+    main.innerHTML += `
+      <div class="empty-state fade-in">
+        <h3>${searchQuery || activeTag ? 'No posts found' : 'No posts yet'}</h3>
+        <p>${searchQuery || activeTag ? 'Try a different search term or tag.' : 'Login to admin and create your first post.'}</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Hero (first post) - only show if not filtering
+  if (!searchQuery && !activeTag) {
+    const featured = displayPosts[0];
+    const heroTpl = byId('hero-tpl').content.firstElementChild.cloneNode(true);
+    heroTpl.querySelector('.hero-title').textContent = featured.title;
+    heroTpl.querySelector('.hero-excerpt').textContent = featured.excerpt || '';
+    heroTpl.querySelector('.hero-date').textContent = featured.date || '';
+    heroTpl.querySelector('.hero-read-time').textContent = calculateReadingTime(featured.content) + ' min read';
+    if (featured.image) {
+      heroTpl.querySelector('.hero-image').style.backgroundImage = `url(${featured.image})`;
+    }
+    heroTpl.addEventListener('click', () => location.hash = 'post-' + featured.id);
+    main.appendChild(heroTpl);
+  }
+
+  // Post tiles
+  const postsToShow = (searchQuery || activeTag) ? displayPosts : displayPosts.slice(1);
+  if (postsToShow.length > 0) {
+    const tilesWrap = byId('tiles-tpl').content.firstElementChild.cloneNode(true);
+    const sectionTitle = tilesWrap.querySelector('.section-title');
+    if (searchQuery || activeTag) {
+      const count = postsToShow.length;
+      sectionTitle.textContent = `${count} post${count !== 1 ? 's' : ''} found`;
+    }
+
+    const tilesContainer = tilesWrap.querySelector('.tiles');
+    const tileTpl = byId('tile-tpl');
+
+    postsToShow.forEach((p, idx) => {
+      const tile = tileTpl.content.firstElementChild.cloneNode(true);
+      tile.style.animationDelay = `${idx * 0.08}s`;
+      tile.classList.add('stagger-' + Math.min(idx + 1, 5));
+
+      // Image
+      if (p.image) {
+        tile.querySelector('.tile-image').style.backgroundImage = `url(${p.image})`;
+      }
+
+      // Badge
+      const imgDiv = tile.querySelector('.tile-image');
+      if (p.featured) {
+        imgDiv.innerHTML = '<span class="tile-badge badge-featured">Featured</span>';
+      } else if (p.series) {
+        imgDiv.innerHTML = '<span class="tile-badge badge-series">Series</span>';
+      } else if (isNew(p.date, 7)) {
+        imgDiv.innerHTML = '<span class="tile-badge badge-new">New</span>';
+      }
+
+      // Tags
+      const tagsDiv = tile.querySelector('.tile-tags');
+      if (p.tags && p.tags.length) {
+        tagsDiv.innerHTML = p.tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('');
+      }
+
+      // Title & meta
+      tile.querySelector('.tile-title').textContent = p.title;
+      tile.querySelector('.tile-meta').textContent = `${p.date || ''} · ${calculateReadingTime(p.content)} min read`;
+
+      tile.addEventListener('click', () => location.hash = 'post-' + p.id);
+      tilesContainer.appendChild(tile);
+    });
+
+    main.appendChild(tilesWrap);
+  }
+}
+
+function renderPost(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) {
+    renderHome();
+    return;
+  }
+
+  currentPostUrl = window.location.href;
+  const tpl = byId('post-tpl').content.firstElementChild.cloneNode(true);
+
+  // Title
+  tpl.querySelector('#post-title').textContent = p.title;
+
+  // Cover image
+  const cover = tpl.querySelector('#post-cover');
+  if (p.image) {
+    cover.style.backgroundImage = `url(${p.image})`;
+  } else {
+    cover.style.background = 'var(--gradient-primary)';
+  }
+
+  // Meta
+  const readTime = calculateReadingTime(p.content);
+  let metaHtml = `<span>${p.date || ''}</span><span>·</span><span>${readTime} min read</span>`;
+  if (p.series) {
+    metaHtml = `<span>${p.series}</span><span>·</span>` + metaHtml;
+  }
+  tpl.querySelector('#post-meta').innerHTML = metaHtml;
+
+  // Content
+  tpl.querySelector('#post-content').innerHTML = mdToHtml(p.content || '');
+
+  // Admin actions
+  const actions = tpl.querySelector('#post-actions');
+  if (isLoggedIn) {
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-secondary btn-sm';
+    editBtn.textContent = 'Edit';
+    editBtn.onclick = () => {
+      renderAdmin();
+      setTimeout(() => loadIntoForm(p.id), 100);
+    };
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn btn-primary btn-sm';
+    delBtn.textContent = 'Delete';
+    delBtn.onclick = () => {
+      if (confirm('Delete this post?')) {
+        posts = posts.filter(x => x.id !== p.id);
+        savePosts();
+        location.hash = 'home';
+      }
+    };
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+  }
+
+  byId('main').innerHTML = '';
+  byId('main').appendChild(tpl);
+  window.scrollTo(0, 0);
+}
+
+function renderAbout() {
+  const tpl = byId('about-tpl').content.firstElementChild.cloneNode(true);
+  byId('main').innerHTML = '';
+  byId('main').appendChild(tpl);
+}
+
+function renderAdmin() {
+  const main = byId('main');
+  main.innerHTML = '';
+
+  if (!isLoggedIn) {
+    const login = byId('login-tpl').content.firstElementChild.cloneNode(true);
+    main.appendChild(login);
+
+    byId('login-go').onclick = () => {
+      const val = byId('login-pass').value || '';
+      if (val === ADMIN_PASS) {
+        isLoggedIn = true;
+        localStorage.setItem('emmiti_logged_in', 'true');
+        updateUI();
+        renderAdmin();
+      } else {
+        alert('Incorrect password');
+      }
+    };
+
+    byId('login-cancel').onclick = () => location.hash = 'home';
+    return;
+  }
+
+  // Admin panel
+  const admin = byId('admin-tpl').content.firstElementChild.cloneNode(true);
+  main.appendChild(admin);
+
+  // Post list
+  const list = byId('admin-list');
+  list.innerHTML = '';
+
+  if (posts.length === 0) {
+    list.innerHTML = '<p class="form-hint">No posts yet. Create your first one!</p>';
+  } else {
+    posts.forEach((p, idx) => {
+      const item = document.createElement('div');
+      item.className = 'post-item';
+
+      let badge = '';
+      if (p.featured) badge = '<span class="tile-badge badge-featured" style="position:static;margin-right:0.5rem;font-size:0.65rem">Featured</span>';
+      else if (p.series) badge = '<span class="tile-badge badge-series" style="position:static;margin-right:0.5rem;font-size:0.65rem">Series</span>';
+
+      item.innerHTML = `
+        <div class="left">
+          <div class="title-text">${badge}${p.title}</div>
+          <div class="form-hint">${p.date || ''} · ${p.tags ? p.tags.join(', ') : ''}</div>
+        </div>
+        <div class="controls"></div>
+      `;
+
+      const controls = item.querySelector('.controls');
+
+      const featBtn = document.createElement('button');
+      featBtn.className = 'btn btn-secondary btn-sm';
+      featBtn.textContent = 'Feature';
+      featBtn.onclick = () => {
+        posts.splice(idx, 1);
+        posts.unshift(p);
+        savePosts();
+        renderAdmin();
+      };
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'btn btn-secondary btn-sm';
+      editBtn.textContent = 'Edit';
+      editBtn.onclick = () => loadIntoForm(p.id);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-primary btn-sm';
+      delBtn.textContent = 'Delete';
+      delBtn.onclick = () => {
+        if (confirm('Delete this post?')) {
+          posts = posts.filter(x => x.id !== p.id);
+          savePosts();
+          renderAdmin();
+        }
+      };
+
+      controls.appendChild(featBtn);
+      controls.appendChild(editBtn);
+      controls.appendChild(delBtn);
+      list.appendChild(item);
+    });
+  }
+
+  // Event handlers
+  byId('save-btn').onclick = adminSave;
+  byId('clear-btn').onclick = clearForm;
+  byId('logout-btn').onclick = () => {
+    if (confirm('Logout?')) {
+      isLoggedIn = false;
+      localStorage.setItem('emmiti_logged_in', 'false');
+      updateUI();
+      location.hash = 'home';
+    }
+  };
+
+  byId('export-btn').onclick = () => {
+    const data = JSON.stringify(posts, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'posts.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  byId('import-btn').onclick = () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = '.json,application/json';
+    inp.onchange = (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (!Array.isArray(data)) throw new Error('Invalid JSON');
+          posts = data;
+          savePosts();
+          alert('Posts imported!');
+          renderAdmin();
+        } catch (err) {
+          alert('Import failed: ' + err.message);
+        }
+      };
+      reader.readAsText(f);
+    };
+    inp.click();
+  };
+
+  byId('copy-json-btn').onclick = () => {
+    const json = JSON.stringify(posts, null, 2);
+    navigator.clipboard.writeText(json).then(() => {
+      alert('JSON copied to clipboard! Paste it into posts.json in your GitHub repo.');
+    }).catch(() => {
+      prompt('Copy this JSON:', json);
+    });
+  };
+
+  // Live preview
+  const contentTa = byId('admin-content');
+  const preview = byId('live-preview');
+  if (contentTa && preview) {
+    const updatePreview = () => {
+      preview.innerHTML = mdToHtml(contentTa.value || '');
+    };
+    contentTa.addEventListener('input', updatePreview);
+    updatePreview();
+  }
+
+  // Image upload
+  const fileInput = byId('admin-image-file');
+  if (fileInput) {
+    fileInput.addEventListener('change', async (e) => {
+      const f = e.target.files[0];
+      if (!f) {
+        showImagePreview('');
+        return;
+      }
+      try {
+        const dataUrl = await readImageAsDataURL(f, 1200, 800, 0.8);
+        showImagePreview(dataUrl);
+      } catch (err) {
+        console.error('Image error:', err);
+      }
+    });
+  }
+
+  const removeBtn = byId('remove-image-btn');
+  if (removeBtn) {
+    removeBtn.onclick = () => {
+      showImagePreview('');
+      const fi = byId('admin-image-file');
+      if (fi) fi.value = '';
+    };
+  }
+}
+
+function loadIntoForm(id) {
+  const p = posts.find(x => x.id === id);
+  if (!p) {
+    alert('Post not found');
+    return;
+  }
+
+  byId('edit-id').value = p.id;
+  byId('admin-title').value = p.title || '';
+  byId('admin-excerpt').value = p.excerpt || '';
+  byId('admin-tags').value = (p.tags || []).join(', ');
+  showImagePreview(p.image || '');
+  byId('admin-content').value = p.content || '';
+  byId('admin-font').value = p.fontChoice || 'default';
+  byId('admin-series').value = p.series || '';
+  byId('admin-featured').checked = p.featured || false;
+  byId('admin-form-title').textContent = 'Edit Post';
+
+  const preview = byId('live-preview');
+  if (preview) preview.innerHTML = mdToHtml(p.content || '');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function clearForm() {
+  byId('edit-id').value = '';
+  byId('admin-title').value = '';
+  byId('admin-excerpt').value = '';
+  byId('admin-tags').value = '';
+  byId('admin-content').value = '';
+  byId('admin-font').value = 'default';
+  byId('admin-series').value = '';
+  byId('admin-featured').checked = false;
+  byId('admin-form-title').textContent = 'Create Post';
+  showImagePreview('');
+  const fi = byId('admin-image-file');
+  if (fi) fi.value = '';
+  const preview = byId('live-preview');
+  if (preview) preview.innerHTML = '';
+}
+
+function adminSave() {
+  const editId = (byId('edit-id').value || '').trim();
+  const title = (byId('admin-title').value || '').trim();
+
+  if (!title) {
+    alert('Title is required');
+    return;
+  }
+
+  const excerpt = (byId('admin-excerpt').value || '').trim();
+  const tags = (byId('admin-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
+
+  const previewImg = byId('admin-image-preview');
+  const image = previewImg && previewImg.getAttribute('data-src') ? previewImg.getAttribute('data-src') : '';
+
+  const content = (byId('admin-content').value || '').trim();
+  const fontChoice = byId('admin-font').value || 'default';
+  const series = (byId('admin-series').value || '').trim();
+  const featured = byId('admin-featured').checked;
+  const dateStr = new Date().toISOString().split('T')[0];
+
+  if (editId) {
+    // Update existing
+    const idx = posts.findIndex(x => x.id === editId);
+    if (idx === -1) {
+      alert('Post not found');
+      return;
+    }
+    posts[idx] = { ...posts[idx], title, excerpt, tags, image, content, fontChoice, series, featured, date: dateStr };
+    savePosts();
+
+    const status = byId('save-status');
+    if (status) status.textContent = 'Post updated! Export JSON to save to GitHub.';
+    setTimeout(() => { if (status) status.textContent = ''; }, 3000);
+  } else {
+    // Create new
+    const id = slugify(title) || Date.now().toString();
+    const newPost = { id, title, excerpt, tags, image, content, fontChoice, series, featured, date: dateStr };
+
+    if (posts.length === 0) {
+      posts.push(newPost);
+    } else {
+      posts.splice(1, 0, newPost);
+    }
+    savePosts();
+
+    const status = byId('save-status');
+    if (status) status.textContent = 'Post created! Export JSON to save to GitHub.';
+    setTimeout(() => { if (status) status.textContent = ''; }, 3000);
+  }
+
+  clearForm();
+  renderAdmin();
+}
+
+// ============================================
+// ROUTER
+// ============================================
+function router() {
+  const hash = (location.hash || '#home').replace(/^#/, '');
+
+  if (!hash || hash === 'home') {
+    renderHome();
+  } else if (hash === 'about') {
+    renderAbout();
+  } else if (hash === 'admin') {
+    renderAdmin();
+  } else if (hash === 'create-post') {
+    if (!isLoggedIn) {
+      location.hash = 'admin';
+      return;
+    }
+    renderAdmin();
+    clearForm();
+  } else if (hash.startsWith('post-')) {
+    renderPost(hash.replace('post-', ''));
+  } else {
+    renderHome();
+  }
+}
+
+function updateUI() {
+  const createBtn = byId('create-post-btn');
+  if (createBtn) {
+    createBtn.style.display = isLoggedIn ? 'inline-block' : 'none';
+  }
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+window.addEventListener('hashchange', () => {
+  // Reset search/filter when navigating
+  if (!location.hash.includes('home') && location.hash !== '' && location.hash !== '#') {
+    // Keep search state only on home
+  }
+  router();
+});
+
+// Header scroll effect
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const header = document.querySelector('header');
+  if (header) {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  }
+  lastScroll = window.scrollY;
+}, { passive: true });
+
+// Hide loading overlay
+function hideLoading() {
+  const overlay = byId('loading-overlay');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    setTimeout(() => overlay.remove(), 500);
+  }
+}
+
+window.addEventListener('load', async () => {
+  loadTheme();
+
+  // Check login state
+  isLoggedIn = localStorage.getItem('emmiti_logged_in') === 'true';
+
+  // Load posts
+  await initPosts();
+
+  updateUI();
+  router();
+
+  // Hide loading overlay
+  setTimeout(hideLoading, 300);
+
+  // Event listeners
+  byId('theme-toggle').addEventListener('click', toggleTheme);
+  byId('open-suggest-btn').addEventListener('click', openSuggestModal);
+  byId('close-suggest').addEventListener('click', closeSuggestModal);
+  byId('suggest-modal').addEventListener('click', (e) => {
+    if (e.target === byId('suggest-modal')) closeSuggestModal();
+  });
+});
+</script>
+</body>
+</html>
