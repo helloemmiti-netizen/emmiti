@@ -122,41 +122,41 @@
     }
 
     .left-gallery::after {
-      right: 0;
-      background:
-        /* Film perforations */
-        repeating-linear-gradient(
-          to bottom,
-          transparent 0px,
-          transparent 8px,
-          #1a1a2a 8px,
-          #1a1a2a 12px,
-          transparent 12px,
-          transparent 28px
-        ),
-        /* Film strip edge */
-        linear-gradient(to left, rgba(26, 26, 42, 0.9) 0px, rgba(26, 26, 42, 0.9) 15px, transparent 15px),
-        /* Fade gradient */
-        linear-gradient(to left, var(--bg), transparent);
-    }
-
-    .right-gallery::after {
       left: 0;
       background:
         /* Film perforations */
         repeating-linear-gradient(
           to bottom,
           transparent 0px,
-          transparent 8px,
-          #1a1a2a 8px,
-          #1a1a2a 12px,
+          transparent 10px,
+          rgba(255, 215, 0, 0.15) 10px,
+          rgba(255, 215, 0, 0.15) 12px,
           transparent 12px,
-          transparent 28px
+          transparent 30px
         ),
         /* Film strip edge */
-        linear-gradient(to right, rgba(26, 26, 42, 0.9) 0px, rgba(26, 26, 42, 0.9) 15px, transparent 15px),
+        linear-gradient(to right, rgba(255, 215, 0, 0.08) 0px, rgba(255, 215, 0, 0.08) 3px, transparent 3px),
         /* Fade gradient */
-        linear-gradient(to right, var(--bg), transparent);
+        linear-gradient(to right, rgba(26, 26, 42, 0.4), transparent);
+    }
+
+    .right-gallery::after {
+      right: 0;
+      background:
+        /* Film perforations */
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0px,
+          transparent 10px,
+          rgba(255, 215, 0, 0.15) 10px,
+          rgba(255, 215, 0, 0.15) 12px,
+          transparent 12px,
+          transparent 30px
+        ),
+        /* Film strip edge */
+        linear-gradient(to left, rgba(255, 215, 0, 0.08) 0px, rgba(255, 215, 0, 0.08) 3px, transparent 3px),
+        /* Fade gradient */
+        linear-gradient(to left, rgba(26, 26, 42, 0.4), transparent);
     }
 
     /* Neon line doodles */
@@ -994,6 +994,57 @@
 
       .center-content {
         flex: 1;
+        min-width: 0;
+      }
+
+      header {
+        padding: 0.75rem 1rem;
+      }
+
+      .header-inner {
+        gap: 0.5rem;
+      }
+
+      #brand {
+        gap: 0.5rem;
+        flex-shrink: 1;
+        min-width: 0;
+      }
+
+      #logo {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      #site-title {
+        font-size: 1.1rem;
+      }
+
+      .tagline {
+        font-size: 0.65rem;
+        display: none;
+      }
+
+      .tagline:first-of-type {
+        display: block;
+      }
+
+      nav {
+        gap: 0.25rem;
+        flex-shrink: 0;
+      }
+
+      nav a {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+      }
+
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
       }
 
       .hero-banner {
@@ -1001,11 +1052,23 @@
       }
 
       .hero-text h1 {
-        font-size: 2rem;
+        font-size: 1.5rem;
+      }
+
+      .hero-text p {
+        font-size: 0.85rem;
       }
 
       .neon-doodle {
         transform: scale(0.7);
+      }
+
+      .post-card h2 {
+        font-size: 1.3rem;
+      }
+
+      .post-meta {
+        font-size: 0.75rem;
       }
     }
 
