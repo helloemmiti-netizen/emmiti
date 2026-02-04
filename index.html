@@ -1694,13 +1694,12 @@
         </div>
 
         <div class="form-group">
-          <label>Content (Markdown)</label>
-          <textarea id="admin-content" placeholder="# Your content here...
+          <label>Content</label>
+          <textarea id="admin-content" placeholder="Just write or paste your content here from Google Docs...
 
-Write your post in Markdown..." rows="10"></textarea>
+No special formatting needed!" rows="10"></textarea>
+          <div class="form-hint">Just copy/paste from Google Docs. Plain text works perfectly!</div>
         </div>
-
-        <div id="live-preview"></div>
 
         <div style="display:flex;gap:0.75rem;margin-top:1.5rem;flex-wrap:wrap">
           <button id="save-btn" class="btn btn-primary">Save Post</button>
@@ -1715,22 +1714,15 @@ Write your post in Markdown..." rows="10"></textarea>
         <div class="card-subtitle">Manage your posts</div>
         <div id="admin-list"></div>
         <hr>
+        <div style="margin-top:1rem">
+          <h4 style="font-size:0.9rem;margin-bottom:0.75rem">💾 Save to GitHub</h4>
+          <button id="save-to-github-btn" class="btn btn-primary" style="width:100%;margin-bottom:0.75rem">Save Posts to GitHub</button>
+          <div id="github-status" class="status-msg"></div>
+        </div>
+        <hr>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
           <button id="export-btn" class="btn btn-secondary btn-sm">Export JSON</button>
           <button id="import-btn" class="btn btn-secondary btn-sm">Import JSON</button>
-        </div>
-        <hr>
-        <div style="margin-top:1rem">
-          <h4 style="font-size:0.9rem;margin-bottom:0.5rem">GitHub Storage Setup</h4>
-          <p class="form-hint" style="margin-bottom:0.75rem">
-            Your posts are saved locally. To persist them on GitHub:
-          </p>
-          <ol style="font-size:0.8rem;color:var(--text-muted);padding-left:1.25rem;margin-bottom:1rem">
-            <li>Export your posts as JSON</li>
-            <li>Save as <code style="background:var(--bg-tertiary);padding:0.1rem 0.3rem;border-radius:3px">posts.json</code> in your repo</li>
-            <li>Commit and push to GitHub</li>
-          </ol>
-          <button id="copy-json-btn" class="btn btn-secondary btn-sm" style="width:100%">Copy Posts as JSON</button>
         </div>
       </div>
     </section>
@@ -1765,7 +1757,13 @@ Write your post in Markdown..." rows="10"></textarea>
 // ============================================
 const ADMIN_PASS = 'secret';
 const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
-const POSTS_JSON_URL = 'posts.json'; // Path to your posts.json file in the same repo
+const POSTS_JSON_URL = 'posts.json';
+
+// GitHub Settings for saving posts
+const GITHUB_OWNER = 'helloemmiti-netizen';
+const GITHUB_REPO = 'emmiti';
+// Token is stored in localStorage after first entry (not in code for security)
+let GITHUB_TOKEN = localStorage.getItem('emmiti_github_token') || '';
 
 // Default posts (shown when no posts.json exists)
 const DEFAULT_POSTS = [];
@@ -1898,6 +1896,83 @@ async function initPosts() {
   posts = DEFAULT_POSTS.slice();
   filteredPosts = [...posts];
   savePosts();
+}
+
+// Save posts directly to GitHub
+async function savePostsToGitHub() {
+  const status = byId('github-status');
+
+  // Check if token exists, if not prompt for it
+  if (!GITHUB_TOKEN) {
+    const token = prompt('Enter your GitHub Personal Access Token:\n(This will be saved locally for future use)');
+    if (!token) {
+      if (status) status.textContent = 'Cancelled - no token provided';
+      return;
+    }
+    GITHUB_TOKEN = token;
+    localStorage.setItem('emmiti_github_token', token);
+  }
+
+  if (status) status.textContent = 'Saving to GitHub...';
+
+  try {
+    // First, get the current file to get its SHA (needed for updates)
+    const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/posts.json`, {
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+
+    let sha = null;
+    if (getResponse.ok) {
+      const fileData = await getResponse.json();
+      sha = fileData.sha;
+    }
+
+    // Prepare the content
+    const content = JSON.stringify(posts, null, 2);
+    const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+    // Create or update the file
+    const body = {
+      message: 'Update posts - ' + new Date().toLocaleString(),
+      content: encodedContent
+    };
+    if (sha) body.sha = sha;
+
+    const saveResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/posts.json`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (saveResponse.ok) {
+      if (status) {
+        status.textContent = '✅ Saved! Site will update in 1-2 mins.';
+        status.style.color = 'var(--gold)';
+      }
+      setTimeout(() => {
+        if (status) {
+          status.textContent = '';
+          status.style.color = '';
+        }
+      }, 5000);
+    } else {
+      const error = await saveResponse.json();
+      throw new Error(error.message || 'Failed to save');
+    }
+  } catch (err) {
+    console.error('GitHub save error:', err);
+    if (status) {
+      status.textContent = '❌ Error: ' + err.message;
+      status.style.color = 'var(--highlight)';
+    }
+  }
 }
 
 // Search and Filter Functions
@@ -2401,6 +2476,8 @@ function renderAdmin() {
     }
   };
 
+  byId('save-to-github-btn').onclick = savePostsToGitHub;
+
   byId('export-btn').onclick = () => {
     const data = JSON.stringify(posts, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
@@ -2439,25 +2516,6 @@ function renderAdmin() {
     inp.click();
   };
 
-  byId('copy-json-btn').onclick = () => {
-    const json = JSON.stringify(posts, null, 2);
-    navigator.clipboard.writeText(json).then(() => {
-      alert('JSON copied to clipboard! Paste it into posts.json in your GitHub repo.');
-    }).catch(() => {
-      prompt('Copy this JSON:', json);
-    });
-  };
-
-  // Live preview
-  const contentTa = byId('admin-content');
-  const preview = byId('live-preview');
-  if (contentTa && preview) {
-    const updatePreview = () => {
-      preview.innerHTML = mdToHtml(contentTa.value || '');
-    };
-    contentTa.addEventListener('input', updatePreview);
-    updatePreview();
-  }
 
   // Image upload
   const fileInput = byId('admin-image-file');
