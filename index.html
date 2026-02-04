@@ -357,16 +357,28 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
       margin-bottom: 1.5rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      overflow: hidden;
     }
 
     .post-card:hover {
       border-color: var(--pink);
       transform: translateY(-4px);
       box-shadow: 0 0 30px rgba(255, 20, 147, 0.2);
+    }
+
+    .post-card-image {
+      width: 100%;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .post-card-content {
+      padding: 1.5rem;
     }
 
     .post-card h3 {
@@ -380,7 +392,7 @@
       color: var(--text-secondary);
       font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .post-card .meta {
@@ -390,6 +402,7 @@
 
     .post-tags {
       display: flex;
+      flex-wrap: wrap;
       gap: 0.5rem;
       margin-bottom: 0.75rem;
     }
@@ -1116,12 +1129,16 @@ function renderHome() {
     html += `<h2>Latest Posts</h2>`;
     posts.forEach(p => {
       const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+      const postImage = p.image ? `<div class="post-card-image" style="background-image:url('${p.image}')"></div>` : '';
       html += `
         <div class="post-card" onclick="location.hash='post-${p.id}'">
-          <div class="post-tags">${tags}</div>
-          <h3>${p.title}</h3>
-          <p class="excerpt">${p.excerpt || ''}</p>
-          <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+          ${postImage}
+          <div class="post-card-content">
+            <h3>${p.title}</h3>
+            <p class="excerpt">${p.excerpt || ''}</p>
+            <div class="post-tags">${tags}</div>
+            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+          </div>
         </div>
       `;
     });
@@ -1243,6 +1260,15 @@ function renderAdmin() {
           </div>
 
           <div class="form-group">
+            <label>Cover Image (Optional)</label>
+            <select id="admin-image">
+              <option value="">No image</option>
+              ${GALLERY_PHOTOS.map(p => `<option value="${p}">${p.replace('photos/', '')}</option>`).join('')}
+            </select>
+            <div class="form-hint">Select from your photos folder</div>
+          </div>
+
+          <div class="form-group">
             <label>Content</label>
             <textarea id="admin-content" placeholder="Just write or paste from Google Docs..." rows="10"></textarea>
             <div class="form-hint">Plain text works perfectly!</div>
@@ -1293,6 +1319,7 @@ function clearForm() {
   byId('admin-title').value = '';
   byId('admin-excerpt').value = '';
   byId('admin-tags').value = '';
+  byId('admin-image').value = '';
   byId('admin-content').value = '';
   byId('form-title').textContent = 'Create Post';
 }
@@ -1305,6 +1332,7 @@ function editPost(id) {
   byId('admin-title').value = p.title || '';
   byId('admin-excerpt').value = p.excerpt || '';
   byId('admin-tags').value = (p.tags || []).join(', ');
+  byId('admin-image').value = p.image || '';
   byId('admin-content').value = p.content || '';
   byId('form-title').textContent = 'Edit Post';
 
@@ -1330,17 +1358,18 @@ function savePost() {
 
   const excerpt = (byId('admin-excerpt').value || '').trim();
   const tags = (byId('admin-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
+  const image = (byId('admin-image').value || '').trim();
   const content = (byId('admin-content').value || '').trim();
   const dateStr = new Date().toISOString().split('T')[0];
 
   if (editId) {
     const idx = posts.findIndex(x => x.id === editId);
     if (idx !== -1) {
-      posts[idx] = { ...posts[idx], title, excerpt, tags, content, date: dateStr };
+      posts[idx] = { ...posts[idx], title, excerpt, tags, image, content, date: dateStr };
     }
   } else {
     const id = slugify(title) || Date.now().toString();
-    posts.unshift({ id, title, excerpt, tags, content, date: dateStr });
+    posts.unshift({ id, title, excerpt, tags, image, content, date: dateStr });
   }
 
   savePosts();
