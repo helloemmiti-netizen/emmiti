@@ -116,7 +116,7 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 12px;
+      width: 20px;
       pointer-events: none;
       z-index: 10;
     }
@@ -124,31 +124,51 @@
     .left-gallery::after {
       left: 0;
       background:
+        /* Sprocket holes pattern */
         repeating-linear-gradient(
           to bottom,
           transparent 0px,
-          transparent 18px,
-          rgba(0, 0, 0, 0.15) 18px,
-          rgba(0, 0, 0, 0.15) 20px,
-          transparent 20px,
-          transparent 40px
+          transparent 5px,
+          #1a1a2a 5px,
+          #1a1a2a 6px,
+          transparent 6px,
+          transparent 8px,
+          #1a1a2a 8px,
+          #1a1a2a 14px,
+          transparent 14px,
+          transparent 16px,
+          #1a1a2a 16px,
+          #1a1a2a 17px,
+          transparent 17px,
+          transparent 22px
         ),
-        linear-gradient(to right, rgba(0, 0, 0, 0.1) 0px, transparent 12px);
+        /* Solid film strip edge */
+        linear-gradient(to right, #1a1a2a 0px, #1a1a2a 8px, transparent 8px);
     }
 
     .right-gallery::after {
       right: 0;
       background:
+        /* Sprocket holes pattern */
         repeating-linear-gradient(
           to bottom,
           transparent 0px,
-          transparent 18px,
-          rgba(0, 0, 0, 0.15) 18px,
-          rgba(0, 0, 0, 0.15) 20px,
-          transparent 20px,
-          transparent 40px
+          transparent 5px,
+          #1a1a2a 5px,
+          #1a1a2a 6px,
+          transparent 6px,
+          transparent 8px,
+          #1a1a2a 8px,
+          #1a1a2a 14px,
+          transparent 14px,
+          transparent 16px,
+          #1a1a2a 16px,
+          #1a1a2a 17px,
+          transparent 17px,
+          transparent 22px
         ),
-        linear-gradient(to left, rgba(0, 0, 0, 0.1) 0px, transparent 12px);
+        /* Solid film strip edge */
+        linear-gradient(to left, #1a1a2a 0px, #1a1a2a 8px, transparent 8px);
     }
 
     /* Neon line doodles */
@@ -1030,15 +1050,25 @@
 
     @media (max-width: 600px) {
       .gallery-layout {
-        flex-direction: column;
+        flex-direction: row;
       }
 
       .side-gallery {
-        display: none !important;
+        width: 40px;
+        min-width: 40px;
+      }
+
+      .wall-photo {
+        border-radius: 4px;
+      }
+
+      .neon-doodle {
+        transform: scale(0.5);
       }
 
       .center-content {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
       }
 
       main {
@@ -1051,7 +1081,7 @@
 
       .hero-text h1 {
         font-size: 1.3rem;
-        padding: 0 1rem;
+        padding: 0 0.5rem;
       }
 
       .hero-text p {
@@ -1068,6 +1098,15 @@
     }
 
     @media (max-width: 480px) {
+      .side-gallery {
+        width: 35px;
+        min-width: 35px;
+      }
+
+      .neon-doodle {
+        transform: scale(0.4);
+      }
+
       header {
         padding: 0.5rem 0.75rem;
       }
@@ -1097,6 +1136,7 @@
 
       .hero-text h1 {
         font-size: 1.1rem;
+        padding: 0 0.25rem;
       }
 
       .post-card h2 {
@@ -1247,7 +1287,6 @@ let GITHUB_TOKEN = localStorage.getItem('emmiti_github_token') || '';
 
 // Photo collection for side galleries
 const GALLERY_PHOTOS = [
-  'photos/mainscreen.jpg',
   'photos/Abhiyum Naanum (2008) Vintage Movie poster.jpeg',
   'photos/Alaipayuthey.jpeg',
   'photos/Ee nagaraniki amaindhi.jpeg',
