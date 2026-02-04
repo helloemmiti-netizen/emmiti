@@ -279,11 +279,23 @@
       box-shadow: 0 0 15px rgba(255, 20, 147, 0.3);
     }
 
+    /* Hide galleries on non-home pages */
+    body.hide-galleries .side-gallery {
+      display: none;
+    }
+
+    body.hide-galleries .center-content {
+      width: 100%;
+    }
+
     /* Hero Banner with mainscreen.jpg */
     .hero-banner {
       width: 100%;
-      height: 350px;
-      background: url('photos/mainscreen.jpg') center/cover no-repeat;
+      height: 400px;
+      background-image: url('photos/mainscreen.jpg');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
       position: relative;
       display: flex;
       align-items: flex-end;
@@ -1070,7 +1082,16 @@ async function submitSuggestion(e) {
 // ============================================
 // RENDERING
 // ============================================
+function showGalleries() {
+  document.body.classList.remove('hide-galleries');
+}
+
+function hideGalleries() {
+  document.body.classList.add('hide-galleries');
+}
+
 function renderHome() {
+  showGalleries();
   const main = byId('main-content');
 
   let html = `
@@ -1111,6 +1132,7 @@ function renderHome() {
 }
 
 function renderPost(id) {
+  hideGalleries();
   const p = posts.find(x => x.id === id);
   if (!p) {
     renderHome();
@@ -1139,6 +1161,7 @@ function renderPost(id) {
 }
 
 function renderAbout() {
+  hideGalleries();
   byId('main-content').innerHTML = `
     <main>
       <div class="about-section">
@@ -1152,6 +1175,7 @@ function renderAbout() {
 }
 
 function renderAdmin() {
+  hideGalleries();
   const main = byId('main-content');
 
   if (!isLoggedIn) {
