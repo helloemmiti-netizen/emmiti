@@ -10,40 +10,47 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Modern palette - Gold, Pink, Blue */
-      --gold: #F5A623;
-      --gold-light: #FFD700;
-      --pink: #FF6B9D;
-      --pink-light: #FF8FB8;
-      --blue: #4A9EFF;
-      --blue-light: #7BB8FF;
-      --blue-dark: #2D7DD2;
+      /* NEON palette - Vibrant Pink, Blue, Gold */
+      --gold: #FFD700;
+      --gold-light: #FFEA00;
+      --gold-neon: #FFC300;
+      --pink: #FF1493;
+      --pink-light: #FF69B4;
+      --pink-neon: #FF00FF;
+      --blue: #00D4FF;
+      --blue-light: #00FFFF;
+      --blue-neon: #00BFFF;
+      --blue-dark: #0099CC;
 
-      /* Dark theme by default - Modern dark */
-      --bg: #0a0a0f;
-      --bg-secondary: #12121a;
-      --bg-tertiary: #1a1a24;
-      --surface: #16161f;
-      --border: #2a2a3a;
-      --border-hover: #3a3a4a;
-      --text: #f5f5f7;
-      --text-secondary: #b8b8c0;
-      --text-muted: #6e6e7a;
-      --accent: #F5A623;
-      --accent-light: #FFD700;
-      --accent-dark: #d4920f;
-      --accent-subtle: rgba(245, 166, 35, 0.12);
-      --highlight: #FF6B9D;
-      --highlight-subtle: rgba(255, 107, 157, 0.12);
-      --blue-subtle: rgba(74, 158, 255, 0.12);
-      --gradient-primary: linear-gradient(135deg, #F5A623 0%, #FFD700 100%);
-      --gradient-accent: linear-gradient(135deg, #FF6B9D 0%, #F5A623 100%);
-      --gradient-blue: linear-gradient(135deg, #4A9EFF 0%, #7BB8FF 100%);
-      --gradient-hero: linear-gradient(135deg, #FF6B9D 0%, #F5A623 50%, #4A9EFF 100%);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-      --shadow-md: 0 4px 15px rgba(0,0,0,0.5);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
-      --shadow-glow: 0 0 40px rgba(255, 107, 157, 0.15);
+      /* Dark theme by default - Deep dark for neon pop */
+      --bg: #050508;
+      --bg-secondary: #0a0a10;
+      --bg-tertiary: #0f0f18;
+      --surface: #0d0d14;
+      --border: #1a1a2a;
+      --border-hover: #2a2a4a;
+      --text: #ffffff;
+      --text-secondary: #d0d0e0;
+      --text-muted: #8888aa;
+      --accent: #FFD700;
+      --accent-light: #FFEA00;
+      --accent-dark: #CC9900;
+      --accent-subtle: rgba(255, 215, 0, 0.15);
+      --highlight: #FF1493;
+      --highlight-subtle: rgba(255, 20, 147, 0.15);
+      --blue-subtle: rgba(0, 212, 255, 0.15);
+      --gradient-primary: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+      --gradient-accent: linear-gradient(135deg, #FF1493 0%, #FF00FF 50%, #00D4FF 100%);
+      --gradient-blue: linear-gradient(135deg, #00D4FF 0%, #00FFFF 100%);
+      --gradient-hero: linear-gradient(135deg, #FF1493 0%, #FFD700 50%, #00D4FF 100%);
+      --gradient-neon: linear-gradient(135deg, #FF00FF 0%, #00FFFF 100%);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.6);
+      --shadow-md: 0 4px 15px rgba(0,0,0,0.7);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.8);
+      --shadow-glow: 0 0 40px rgba(255, 20, 147, 0.3);
+      --shadow-glow-gold: 0 0 30px rgba(255, 215, 0, 0.4);
+      --shadow-glow-blue: 0 0 30px rgba(0, 212, 255, 0.4);
+      --shadow-glow-pink: 0 0 30px rgba(255, 20, 147, 0.4);
       --radius: 16px;
       --radius-lg: 24px;
     }
@@ -154,8 +161,11 @@
       height: 50px;
       border: 3px solid var(--border);
       border-top-color: var(--highlight);
+      border-right-color: var(--gold);
+      border-bottom-color: var(--blue);
       border-radius: 50%;
       animation: spin 1s linear infinite;
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
     }
 
     @keyframes spin {
@@ -184,7 +194,7 @@
     .search-input:focus {
       outline: none;
       border-color: var(--highlight);
-      box-shadow: 0 0 0 4px var(--highlight-subtle), var(--shadow-md);
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.4), 0 0 40px rgba(0, 212, 255, 0.2);
       transform: scale(1.02);
     }
 
@@ -265,7 +275,7 @@
       background: var(--gradient-accent);
       color: #fff;
       border-color: transparent;
-      box-shadow: 0 4px 15px rgba(255, 108, 220, 0.3);
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
     }
 
     /* Header */
@@ -318,13 +328,19 @@
       font-family: 'Fraunces', serif;
       font-size: 20px;
       color: #fff;
-      box-shadow: 0 4px 15px rgba(129, 42, 137, 0.3);
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(255, 20, 147, 0.3);
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+      animation: neonPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes neonPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(255, 20, 147, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(0, 212, 255, 0.4); }
     }
 
     #brand:hover #logo {
       transform: scale(1.1) rotate(-5deg);
-      box-shadow: 0 6px 20px rgba(255, 108, 220, 0.4);
+      box-shadow: 0 0 30px rgba(255, 20, 147, 0.7), 0 0 60px rgba(0, 212, 255, 0.5);
     }
 
     #site-title {
@@ -333,6 +349,7 @@
       font-size: 1.5rem;
       color: var(--text);
       letter-spacing: -0.02em;
+      text-shadow: 0 0 10px rgba(255, 20, 147, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
     }
 
     .tagline {
@@ -420,7 +437,7 @@
 
     .hero:hover {
       border-color: var(--highlight);
-      box-shadow: 0 12px 50px rgba(255, 108, 220, 0.25);
+      box-shadow: 0 0 30px rgba(255, 20, 147, 0.4), 0 0 60px rgba(0, 212, 255, 0.3);
       transform: translateY(-6px) scale(1.01);
     }
 
@@ -446,8 +463,8 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.35rem 0.75rem;
-      background: var(--highlight-subtle);
-      color: var(--highlight);
+      background: var(--gradient-accent);
+      color: #fff;
       border-radius: 6px;
       font-size: 0.75rem;
       font-weight: 600;
@@ -455,6 +472,7 @@
       letter-spacing: 0.05em;
       margin-bottom: 1rem;
       width: fit-content;
+      box-shadow: 0 0 15px rgba(255, 20, 147, 0.5), 0 0 30px rgba(0, 212, 255, 0.3);
     }
 
     .hero-title {
@@ -465,6 +483,7 @@
       line-height: 1.2;
       letter-spacing: -0.02em;
       color: var(--text);
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 0 30px rgba(255, 20, 147, 0.2);
     }
 
     .hero-excerpt {
@@ -486,6 +505,7 @@
       background-size: cover;
       background-position: center;
       position: relative;
+      background-image: url('photos/mainscreen.jpg');
     }
 
     .hero-image::after {
@@ -502,6 +522,7 @@
       font-weight: 600;
       margin-bottom: 1.5rem;
       color: var(--text);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
     }
 
     .tiles {
@@ -533,7 +554,7 @@
 
     .tile:hover {
       border-color: var(--highlight);
-      box-shadow: 0 12px 40px rgba(255, 108, 220, 0.2);
+      box-shadow: 0 0 25px rgba(255, 20, 147, 0.4), 0 0 50px rgba(255, 215, 0, 0.2);
       transform: translateY(-8px) scale(1.02);
     }
 
@@ -547,6 +568,7 @@
       background-position: center;
       position: relative;
       transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      background-image: url('photos/mainscreen.jpg');
     }
 
     .tile:hover .tile-image {
@@ -571,9 +593,19 @@
       color: #fff;
     }
 
-    .badge-new { background: var(--highlight); }
-    .badge-featured { background: var(--gold); }
-    .badge-series { background: var(--purple); }
+    .badge-new {
+      background: var(--highlight);
+      box-shadow: 0 0 10px rgba(255, 20, 147, 0.6);
+    }
+    .badge-featured {
+      background: var(--gold);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+    .badge-series {
+      background: var(--blue);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+    }
 
     .tile-content {
       padding: 1.25rem;
@@ -652,6 +684,7 @@
       position: relative;
       display: flex;
       align-items: flex-end;
+      background-image: url('photos/mainscreen.jpg');
     }
 
     .post-cover::before {
@@ -987,13 +1020,14 @@
 
     .btn-primary {
       background: var(--gradient-primary);
-      color: #fff;
-      box-shadow: var(--shadow-sm);
+      color: #000;
+      font-weight: 600;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.3);
     }
 
     .btn-secondary {
@@ -1132,6 +1166,7 @@
       font-family: 'Fraunces', serif;
       font-size: 2rem;
       margin-bottom: 1.5rem;
+      text-shadow: 0 0 15px rgba(255, 20, 147, 0.5), 0 0 30px rgba(255, 215, 0, 0.3);
     }
 
     .about-section p {
@@ -1240,14 +1275,20 @@
       border-radius: 50px;
       padding: 1rem 1.5rem;
       font-weight: 600;
-      box-shadow: 0 8px 30px rgba(129, 42, 137, 0.3);
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
       cursor: pointer;
       transition: all 0.2s;
+      animation: neonButtonPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes neonButtonPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 20, 147, 0.5), 0 0 40px rgba(0, 212, 255, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 20, 147, 0.4); }
     }
 
     .suggest-float-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(255, 108, 220, 0.4);
+      box-shadow: 0 0 35px rgba(255, 20, 147, 0.7), 0 0 70px rgba(0, 212, 255, 0.5);
     }
 
     /* Status Message */
@@ -1727,20 +1768,7 @@ const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
 const POSTS_JSON_URL = 'posts.json'; // Path to your posts.json file in the same repo
 
 // Default posts (shown when no posts.json exists)
-const DEFAULT_POSTS = [
-  {
-    id: 'welcome',
-    title: 'Welcome to Emmiti',
-    date: '2025-01-15',
-    excerpt: 'A modern, minimal blog powered by GitHub.',
-    tags: ['welcome', 'intro'],
-    image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=800&fit=crop',
-    content: '# Welcome\n\nThis is **Emmiti** — a clean, modern blog.\n\n## Features\n\n- Write posts in Markdown\n- Beautiful typography\n- Dark/light theme\n- No database needed\n\n## Getting Started\n\n1. Login to Admin\n2. Create your first post\n3. Export as JSON\n4. Save to your GitHub repo\n\nThat\'s it!',
-    fontChoice: 'default',
-    featured: true,
-    series: ''
-  }
-];
+const DEFAULT_POSTS = [];
 
 // ============================================
 // STATE
@@ -1989,7 +2017,7 @@ function updateThemeIcon(theme) {
 }
 
 function loadTheme() {
-  const saved = localStorage.getItem('emmiti_theme') || 'light';
+  const saved = localStorage.getItem('emmiti_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', saved);
   updateThemeIcon(saved);
 }
@@ -2224,7 +2252,7 @@ function renderPost(id) {
   if (p.image) {
     cover.style.backgroundImage = `url(${p.image})`;
   } else {
-    cover.style.background = 'var(--gradient-primary)';
+    cover.style.backgroundImage = `url('photos/mainscreen.jpg')`;
   }
 
   // Meta
