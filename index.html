@@ -1058,6 +1058,14 @@
         min-width: 40px;
       }
 
+      body.hide-galleries .side-gallery {
+        display: none !important;
+      }
+
+      body.hide-galleries .center-content {
+        width: 100%;
+      }
+
       .wall-photo {
         border-radius: 4px;
       }
@@ -1095,12 +1103,36 @@
       .post-card img {
         height: 150px;
       }
+
+      .post-body {
+        padding: 1.5rem 1rem;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      .post-body p {
+        margin-bottom: 1.2rem;
+      }
+
+      .post-body h2 {
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
+      }
+
+      .post-body h3 {
+        font-size: 1.1rem;
+        margin-top: 1.2rem;
+      }
     }
 
     @media (max-width: 480px) {
       .side-gallery {
         width: 35px;
         min-width: 35px;
+      }
+
+      body.hide-galleries .side-gallery {
+        display: none !important;
       }
 
       .neon-doodle {
@@ -1130,6 +1162,10 @@
         padding: 0.5rem;
       }
 
+      body.hide-galleries main {
+        padding: 0.5rem;
+      }
+
       .hero-banner {
         height: 150px;
       }
@@ -1141,6 +1177,26 @@
 
       .post-card h2 {
         font-size: 1.1rem;
+      }
+
+      .post-body {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+        line-height: 1.65;
+      }
+
+      .post-body p {
+        margin-bottom: 1rem;
+      }
+
+      .post-body h2 {
+        font-size: 1.2rem;
+        margin-top: 1.3rem;
+      }
+
+      .post-body h3 {
+        font-size: 1rem;
+        margin-top: 1rem;
       }
 
       .suggest-float-btn {
