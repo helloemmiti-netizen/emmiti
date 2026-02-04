@@ -66,7 +66,7 @@
       overflow: hidden;
     }
 
-    /* Side Photo Galleries */
+    /* Side Photo Galleries with Neon Doodles */
     .side-gallery {
       width: 200px;
       min-width: 200px;
@@ -74,6 +74,41 @@
       overflow: hidden;
       position: relative;
       background: var(--bg);
+    }
+
+    /* Neon doodles overlay */
+    .side-gallery::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background-image:
+        /* Stars */
+        radial-gradient(2px 2px at 20px 30px, var(--pink), transparent),
+        radial-gradient(2px 2px at 40px 70px, var(--blue), transparent),
+        radial-gradient(2px 2px at 50px 160px, var(--gold), transparent),
+        radial-gradient(2px 2px at 90px 40px, var(--pink), transparent),
+        radial-gradient(2px 2px at 130px 80px, var(--blue), transparent),
+        radial-gradient(2px 2px at 160px 120px, var(--gold), transparent),
+        radial-gradient(3px 3px at 70px 200px, var(--pink), transparent),
+        radial-gradient(2px 2px at 100px 300px, var(--blue), transparent),
+        radial-gradient(2px 2px at 30px 400px, var(--gold), transparent),
+        radial-gradient(3px 3px at 150px 350px, var(--pink), transparent),
+        radial-gradient(2px 2px at 80px 500px, var(--blue), transparent),
+        radial-gradient(2px 2px at 120px 600px, var(--gold), transparent),
+        /* Heart doodles */
+        radial-gradient(4px 4px at 60px 250px, var(--pink), transparent),
+        radial-gradient(4px 4px at 140px 450px, var(--pink), transparent),
+        /* Sparkles */
+        radial-gradient(3px 3px at 25px 550px, var(--gold), transparent),
+        radial-gradient(3px 3px at 175px 220px, var(--gold), transparent);
+      animation: twinkle 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
 
     .side-gallery::after {
@@ -94,6 +129,106 @@
     .right-gallery::after {
       left: 0;
       background: linear-gradient(to right, var(--bg), transparent);
+    }
+
+    /* Neon line doodles */
+    .neon-doodle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .left-gallery .neon-line-1 {
+      top: 15%;
+      left: 10px;
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), transparent);
+      box-shadow: 0 0 10px var(--pink);
+      transform: rotate(-15deg);
+    }
+
+    .left-gallery .neon-line-2 {
+      top: 45%;
+      right: 20px;
+      width: 30px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue));
+      box-shadow: 0 0 10px var(--blue);
+      transform: rotate(20deg);
+    }
+
+    .left-gallery .neon-spiral {
+      bottom: 25%;
+      left: 30px;
+      width: 25px;
+      height: 25px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      border-right-color: transparent;
+      box-shadow: 0 0 15px var(--gold);
+      animation: spin 8s linear infinite;
+    }
+
+    .right-gallery .neon-line-1 {
+      top: 25%;
+      right: 15px;
+      width: 35px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--pink));
+      box-shadow: 0 0 10px var(--pink);
+      transform: rotate(10deg);
+    }
+
+    .right-gallery .neon-line-2 {
+      top: 60%;
+      left: 10px;
+      width: 45px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+      box-shadow: 0 0 10px var(--blue);
+      transform: rotate(-25deg);
+    }
+
+    .right-gallery .neon-heart {
+      bottom: 35%;
+      right: 40px;
+      width: 20px;
+      height: 18px;
+      background: var(--pink);
+      transform: rotate(-45deg);
+      box-shadow: 0 0 20px var(--pink);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .right-gallery .neon-heart::before,
+    .right-gallery .neon-heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 18px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .right-gallery .neon-heart::before {
+      top: -9px;
+      left: 0;
+    }
+
+    .right-gallery .neon-heart::after {
+      left: 9px;
+      top: 0;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: rotate(-45deg) scale(1); opacity: 0.8; }
+      50% { transform: rotate(-45deg) scale(1.2); opacity: 1; }
     }
 
     .photo-strip {
@@ -279,13 +414,20 @@
       box-shadow: 0 0 15px rgba(255, 20, 147, 0.3);
     }
 
-    /* Hide galleries on non-home pages */
+    /* Hide galleries on non-home pages - Full width content */
     body.hide-galleries .side-gallery {
       display: none;
     }
 
     body.hide-galleries .center-content {
       width: 100%;
+      max-width: 100%;
+    }
+
+    body.hide-galleries main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 3rem;
     }
 
     /* Hero Banner with mainscreen.jpg */
@@ -434,16 +576,66 @@
       color: var(--text-muted);
     }
 
-    /* Single Post View */
+    /* Single Post View - Full Width */
     .post-view {
       background: var(--surface);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
       overflow: hidden;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Blurred hero image for posts */
+    .post-hero {
+      width: 100%;
+      height: 350px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(5, 5, 8, 0.4);
+    }
+
+    .post-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, var(--surface) 100%);
+    }
+
+    .post-hero-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 2rem 3rem;
+      z-index: 2;
+    }
+
+    .post-hero-content h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2.8rem;
+      color: var(--text);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+      margin-bottom: 0.5rem;
+    }
+
+    .post-hero-content .post-meta {
+      color: var(--text-secondary);
+      font-size: 1rem;
     }
 
     .post-header {
-      padding: 2rem;
+      padding: 2rem 3rem;
       border-bottom: 1px solid var(--border);
     }
 
@@ -475,14 +667,16 @@
     }
 
     .post-body {
-      padding: 2rem;
-      font-size: 1.1rem;
-      line-height: 1.8;
+      padding: 3rem 4rem;
+      font-size: 1.15rem;
+      line-height: 1.9;
       color: var(--text-secondary);
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     .post-body p {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
     }
 
     /* About Section */
@@ -805,6 +999,9 @@
   <div class="gallery-layout">
     <!-- Left Photo Gallery -->
     <div class="side-gallery left-gallery">
+      <div class="neon-doodle neon-line-1"></div>
+      <div class="neon-doodle neon-line-2"></div>
+      <div class="neon-doodle neon-spiral"></div>
       <div class="photo-strip" id="left-photos"></div>
     </div>
 
@@ -851,6 +1048,9 @@
 
     <!-- Right Photo Gallery -->
     <div class="side-gallery right-gallery">
+      <div class="neon-doodle neon-line-1"></div>
+      <div class="neon-doodle neon-line-2"></div>
+      <div class="neon-doodle neon-heart"></div>
       <div class="photo-strip" id="right-photos"></div>
     </div>
   </div>
@@ -1159,15 +1359,18 @@ function renderPost(id) {
   }
 
   const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+  const heroImage = p.image || 'photos/mainscreen.jpg';
 
   byId('main-content').innerHTML = `
     <main>
       <div class="post-view">
-        <div class="post-header">
-          <a href="#home" class="back-link">← Back to home</a>
-          <div class="post-tags">${tags}</div>
-          <h1>${p.title}</h1>
-          <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+        <div class="post-hero" style="background-image: url('${heroImage}')">
+          <div class="post-hero-content">
+            <a href="#home" class="back-link" style="color:#fff;margin-bottom:1rem;display:inline-block">← Back to home</a>
+            <div class="post-tags" style="margin-bottom:1rem">${tags}</div>
+            <h1>${p.title}</h1>
+            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+          </div>
         </div>
         <div class="post-body">
           ${textToHtml(p.content || '')}
