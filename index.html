@@ -116,7 +116,7 @@
       position: absolute;
       top: 0;
       bottom: 0;
-      width: 30px;
+      width: 12px;
       pointer-events: none;
       z-index: 10;
     }
@@ -124,39 +124,31 @@
     .left-gallery::after {
       left: 0;
       background:
-        /* Film perforations */
         repeating-linear-gradient(
           to bottom,
           transparent 0px,
-          transparent 10px,
-          rgba(255, 215, 0, 0.15) 10px,
-          rgba(255, 215, 0, 0.15) 12px,
-          transparent 12px,
-          transparent 30px
+          transparent 18px,
+          rgba(0, 0, 0, 0.15) 18px,
+          rgba(0, 0, 0, 0.15) 20px,
+          transparent 20px,
+          transparent 40px
         ),
-        /* Film strip edge */
-        linear-gradient(to right, rgba(255, 215, 0, 0.08) 0px, rgba(255, 215, 0, 0.08) 3px, transparent 3px),
-        /* Fade gradient */
-        linear-gradient(to right, rgba(26, 26, 42, 0.4), transparent);
+        linear-gradient(to right, rgba(0, 0, 0, 0.1) 0px, transparent 12px);
     }
 
     .right-gallery::after {
       right: 0;
       background:
-        /* Film perforations */
         repeating-linear-gradient(
           to bottom,
           transparent 0px,
-          transparent 10px,
-          rgba(255, 215, 0, 0.15) 10px,
-          rgba(255, 215, 0, 0.15) 12px,
-          transparent 12px,
-          transparent 30px
+          transparent 18px,
+          rgba(0, 0, 0, 0.15) 18px,
+          rgba(0, 0, 0, 0.15) 20px,
+          transparent 20px,
+          transparent 40px
         ),
-        /* Film strip edge */
-        linear-gradient(to left, rgba(255, 215, 0, 0.08) 0px, rgba(255, 215, 0, 0.08) 3px, transparent 3px),
-        /* Fade gradient */
-        linear-gradient(to left, rgba(26, 26, 42, 0.4), transparent);
+        linear-gradient(to left, rgba(0, 0, 0, 0.1) 0px, transparent 12px);
     }
 
     /* Neon line doodles */
@@ -987,88 +979,135 @@
         min-width: 80px;
       }
 
-      .wall-photo {
-        width: 100%;
-        border-radius: 6px;
-      }
-
       .center-content {
         flex: 1;
         min-width: 0;
       }
 
+      main {
+        padding: 1.5rem;
+      }
+
+      .hero-banner {
+        height: 220px;
+      }
+
+      .hero-text h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 768px) {
       header {
         padding: 0.75rem 1rem;
       }
 
-      .header-inner {
-        gap: 0.5rem;
-      }
-
-      #brand {
-        gap: 0.5rem;
-        flex-shrink: 1;
-        min-width: 0;
-      }
-
-      #logo {
-        width: 38px;
-        height: 38px;
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-
       #site-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
       }
 
       .tagline {
-        font-size: 0.65rem;
         display: none;
-      }
-
-      .tagline:first-of-type {
-        display: block;
       }
 
       nav {
         gap: 0.25rem;
-        flex-shrink: 0;
       }
 
       nav a {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.5rem;
       }
 
-      .theme-toggle {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-      }
-
-      .hero-banner {
-        height: 250px;
+      main {
+        padding: 1rem;
       }
 
       .hero-text h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-layout {
+        flex-direction: column;
+      }
+
+      .side-gallery {
+        display: none !important;
+      }
+
+      .center-content {
+        width: 100%;
+      }
+
+      main {
+        padding: 0.75rem;
+      }
+
+      .hero-banner {
+        height: 180px;
+      }
+
+      .hero-text h1 {
+        font-size: 1.3rem;
+        padding: 0 1rem;
       }
 
       .hero-text p {
-        font-size: 0.85rem;
-      }
-
-      .neon-doodle {
-        transform: scale(0.7);
+        font-size: 0.8rem;
       }
 
       .post-card h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
       }
 
-      .post-meta {
-        font-size: 0.75rem;
+      .post-card img {
+        height: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 0.5rem 0.75rem;
+      }
+
+      #logo {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+
+      #site-title {
+        font-size: 0.9rem;
+      }
+
+      nav a {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.4rem;
+      }
+
+      main {
+        padding: 0.5rem;
+      }
+
+      .hero-banner {
+        height: 150px;
+      }
+
+      .hero-text h1 {
+        font-size: 1.1rem;
+      }
+
+      .post-card h2 {
+        font-size: 1.1rem;
+      }
+
+      .suggest-float-btn {
+        right: 0.75rem;
+        bottom: 0.75rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
       }
     }
 
@@ -1228,7 +1267,18 @@ const GALLERY_PHOTOS = [
   'photos/_ (10).jpeg',
   'photos/_.jpeg',
   'photos/not mine.jpeg',
-  'photos/⭐️.jpeg'
+  'photos/⭐️.jpeg',
+  'photos/236cff2d94405364037e196ed6fbb497.jpg',
+  'photos/3b3f5c47bc580784707e9f9199d5dc62.jpg',
+  'photos/3c284737d4ee8eeb333d885f34f66917.jpg',
+  'photos/4b90e9811cd20cef485617512869c192.jpg',
+  'photos/54fa97a1c48bcfdac705cb50e5c72bde.jpg',
+  'photos/7ecf002fdc48ee2b068178cbf3757a1d.jpg',
+  'photos/8f02dc0a3b9b9dd50691b63eac3cfc2e.jpg',
+  'photos/96d1fef3e7699260633040fa32e98a5e.jpg',
+  'photos/9c3707db0a6c249021101d3fe365c240.jpg',
+  'photos/c99b335ca93276f5c8248096f1c1ca37.jpg',
+  'photos/a7febe8968bcbcae8baf784df8743f6f.jpg'
 ];
 
 // ============================================
