@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="photos/mainscreen.jpg">
+  <link rel="preload" as="image" href="photos/image.png">
   <style>
     :root {
       --gold: #FFD700;
@@ -426,11 +428,27 @@
       padding: 0.5rem 1rem;
       border-radius: 8px;
       transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
     }
 
     nav a:hover {
       color: var(--pink);
       background: var(--highlight-subtle);
+    }
+
+    nav a .nav-main {
+      font-weight: 500;
+    }
+
+    nav a .nav-subtitle {
+      font-size: 0.65rem;
+      opacity: 0.55;
+      font-weight: 400;
+      margin-top: 0.15rem;
+      white-space: nowrap;
     }
 
     .theme-toggle {
@@ -662,7 +680,7 @@
       margin: 0 auto;
     }
 
-    /* Blurred hero image for posts */
+    /* Sharp hero image for posts - no blur */
     .post-hero {
       width: 100%;
       height: 350px;
@@ -676,9 +694,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      background: rgba(5, 5, 8, 0.4);
+      background: rgba(5, 5, 8, 0.3);
     }
 
     .post-hero::after {
@@ -1015,6 +1031,20 @@
       .hero-text h1 {
         font-size: 1.6rem;
       }
+
+      /* Reduce animation complexity on mobile */
+      .photo-strip {
+        animation-duration: 100s;
+      }
+
+      .side-gallery::before {
+        animation: none;
+        opacity: 0.5;
+      }
+
+      .neon-doodle {
+        display: none;
+      }
     }
 
     @media (max-width: 768px) {
@@ -1037,6 +1067,10 @@
       nav a {
         font-size: 0.75rem;
         padding: 0.4rem 0.5rem;
+      }
+
+      nav a .nav-subtitle {
+        display: none;
       }
 
       main {
@@ -1193,6 +1227,10 @@
       nav a {
         font-size: 0.7rem;
         padding: 0.3rem 0.4rem;
+      }
+
+      nav a .nav-main {
+        font-size: 0.65rem;
       }
 
       main {
@@ -1365,9 +1403,23 @@
             </div>
           </div>
           <nav>
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#admin">Admin</a>
+            <a href="#home">
+              <span class="nav-main">Home</span>
+            </a>
+            <a href="#craft">
+              <span class="nav-main">The Craft Lens</span>
+              <span class="nav-subtitle">(on technique/reviews)</span>
+            </a>
+            <a href="#life">
+              <span class="nav-main">The Life Lens</span>
+              <span class="nav-subtitle">(on philosophy/interrelations)</span>
+            </a>
+            <a href="#about">
+              <span class="nav-main">About</span>
+            </a>
+            <a href="#admin">
+              <span class="nav-main">Admin</span>
+            </a>
             <button class="theme-toggle" id="theme-toggle">
               <span id="theme-icon">☀</span>
             </button>
@@ -1456,6 +1508,8 @@ const GALLERY_PHOTOS = [
 // ============================================
 let posts = [];
 let isLoggedIn = false;
+let viewCounts = {};
+let currentLensFilter = null; // null = all, 'craft' or 'life'
 
 // ============================================
 // UTILITIES
@@ -1481,8 +1535,12 @@ function initPhotoGalleries() {
   const leftPhotos = byId('left-photos');
   const rightPhotos = byId('right-photos');
 
+  // Reduce photos on mobile for faster loading
+  const isMobile = window.innerWidth <= 768;
+  const photoCount = isMobile ? 10 : GALLERY_PHOTOS.length;
+
   // Split photos between left and right
-  const shuffled = [...GALLERY_PHOTOS].sort(() => Math.random() - 0.5);
+  const shuffled = [...GALLERY_PHOTOS].sort(() => Math.random() - 0.5).slice(0, photoCount);
   const half = Math.ceil(shuffled.length / 2);
   const leftSet = shuffled.slice(0, half);
   const rightSet = shuffled.slice(half);
@@ -1517,6 +1575,73 @@ function loadLocalPosts() {
   } catch (e) {
     return null;
   }
+}
+
+// ============================================
+// VIEW COUNT TRACKING
+// ============================================
+function loadViewCounts() {
+  try {
+    const raw = localStorage.getItem('emmiti_view_counts');
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveViewCounts() {
+  try {
+    localStorage.setItem('emmiti_view_counts', JSON.stringify(viewCounts));
+  } catch (e) {
+    console.error('Failed to save view counts:', e);
+  }
+}
+
+function incrementViewCount(postId) {
+  if (!viewCounts[postId]) {
+    viewCounts[postId] = 0;
+  }
+  viewCounts[postId]++;
+  saveViewCounts();
+}
+
+function getViewCount(postId) {
+  return viewCounts[postId] || 0;
+}
+
+function trackPostView(postId) {
+  const postBody = document.querySelector('.post-body');
+  if (!postBody) return;
+
+  let hasViewed = false;
+  const viewedKey = `emmiti_viewed_${postId}`;
+
+  // Check if already viewed in this session
+  if (sessionStorage.getItem(viewedKey)) {
+    return;
+  }
+
+  const handleScroll = () => {
+    const postHeight = postBody.scrollHeight;
+    const scrolled = window.scrollY + window.innerHeight - postBody.offsetTop;
+    const percentScrolled = (scrolled / postHeight) * 100;
+
+    // If user has read at least 50% of the post
+    if (percentScrolled >= 50 && !hasViewed) {
+      hasViewed = true;
+      incrementViewCount(postId);
+      sessionStorage.setItem(viewedKey, 'true');
+      window.removeEventListener('scroll', handleScroll);
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+  // Clean up on hash change
+  const cleanup = () => {
+    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('hashchange', cleanup);
+  };
+  window.addEventListener('hashchange', cleanup);
 }
 
 async function fetchPostsFromGitHub() {
@@ -1736,9 +1861,16 @@ function hideGalleries() {
   document.body.classList.add('hide-galleries');
 }
 
-function renderHome() {
+function renderHome(lensFilter = null) {
   showGalleries();
+  currentLensFilter = lensFilter;
   const main = byId('main-content');
+
+  // Filter posts by lens if specified
+  let filteredPosts = posts;
+  if (lensFilter) {
+    filteredPosts = posts.filter(p => p.lens === lensFilter);
+  }
 
   let html = `
     <div class="hero-banner">
@@ -1747,18 +1879,32 @@ function renderHome() {
       <div class="posts-section">
   `;
 
-  if (posts.length === 0) {
+  // Show filter status
+  if (lensFilter) {
+    const lensName = lensFilter === 'craft' ? 'The Craft Lens' : 'The Life Lens';
+    const lensSubtitle = lensFilter === 'craft' ? 'technique/reviews' : 'philosophy/interrelations';
+    html += `
+      <div style="margin-bottom:1.5rem;padding:1rem;background:var(--bg-tertiary);border-radius:var(--radius);border:1px solid var(--border)">
+        <h2 style="margin:0;font-size:1.3rem">${lensName}</h2>
+        <p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--text-muted)">${lensSubtitle}</p>
+      </div>
+    `;
+  }
+
+  if (filteredPosts.length === 0) {
     html += `
       <div class="empty-state">
-        <h3>No posts yet</h3>
-        <p>Login to admin and create your first post.</p>
+        <h3>${lensFilter ? 'No posts in this lens yet' : 'No posts yet'}</h3>
+        <p>${lensFilter ? 'Check back later for new content.' : 'Login to admin and create your first post.'}</p>
       </div>
     `;
   } else {
     html += `<h2>Latest Posts</h2>`;
-    posts.forEach(p => {
+    filteredPosts.forEach(p => {
       const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
       const postImage = p.image ? `<div class="post-card-image" style="background-image:url('${p.image}')"></div>` : '';
+      const views = getViewCount(p.id);
+      const lensLabel = p.lens ? (p.lens === 'craft' ? 'The "Craft" Lens' : 'The "Life" Lens') : '';
       html += `
         <div class="post-card" onclick="location.hash='post-${p.id}'">
           ${postImage}
@@ -1766,7 +1912,7 @@ function renderHome() {
             <h3>${p.title}</h3>
             <p class="excerpt">${p.excerpt || ''}</p>
             <div class="post-tags">${tags}</div>
-            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read${lensLabel ? ' · ' + lensLabel : ''} · <span style="opacity: 0.6; font-size: 0.85em">${views} views</span></div>
           </div>
         </div>
       `;
@@ -1788,6 +1934,8 @@ function renderPost(id) {
   const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const heroImage = p.image || 'photos/mainscreen.jpg';
 
+  const views = getViewCount(p.id);
+  const lensLabel = p.lens ? (p.lens === 'craft' ? 'The "Craft" Lens' : 'The "Life" Lens') : '';
   byId('main-content').innerHTML = `
     <main>
       <div class="post-view">
@@ -1796,7 +1944,7 @@ function renderPost(id) {
             <a href="#home" class="back-link" style="color:#fff;margin-bottom:1rem;display:inline-block">← Back to home</a>
             <div class="post-tags" style="margin-bottom:1rem">${tags}</div>
             <h1>${p.title}</h1>
-            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
+            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read${lensLabel ? ' · ' + lensLabel : ''} · <span style="opacity: 0.6; font-size: 0.9em">${views} views</span></div>
           </div>
         </div>
         <div class="post-body">
@@ -1807,6 +1955,9 @@ function renderPost(id) {
   `;
 
   window.scrollTo(0, 0);
+
+  // Start tracking view for this post
+  setTimeout(() => trackPostView(p.id), 500);
 }
 
 function renderAbout() {
@@ -1892,6 +2043,16 @@ function renderAdmin() {
           </div>
 
           <div class="form-group">
+            <label>Lens Category</label>
+            <select id="admin-lens">
+              <option value="">No lens (General)</option>
+              <option value="craft">The Craft Lens (technique/reviews)</option>
+              <option value="life">The Life Lens (philosophy/interrelations)</option>
+            </select>
+            <div class="form-hint">Categorize this post by lens perspective</div>
+          </div>
+
+          <div class="form-group">
             <label>Cover Image (Optional)</label>
             <select id="admin-image">
               <option value="">No image</option>
@@ -1960,6 +2121,7 @@ function clearForm() {
   byId('admin-title').value = '';
   byId('admin-excerpt').value = '';
   byId('admin-tags').value = '';
+  byId('admin-lens').value = '';
   byId('admin-image').value = '';
   byId('admin-content').value = '';
   byId('form-title').textContent = 'Create Post';
@@ -1973,6 +2135,7 @@ function editPost(id) {
   byId('admin-title').value = p.title || '';
   byId('admin-excerpt').value = p.excerpt || '';
   byId('admin-tags').value = (p.tags || []).join(', ');
+  byId('admin-lens').value = p.lens || '';
   byId('admin-image').value = p.image || '';
   byId('admin-content').value = p.content || '';
   byId('form-title').textContent = 'Edit Post';
@@ -1999,6 +2162,7 @@ function savePost() {
 
   const excerpt = (byId('admin-excerpt').value || '').trim();
   const tags = (byId('admin-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
+  const lens = (byId('admin-lens').value || '').trim();
   const image = (byId('admin-image').value || '').trim();
   const content = (byId('admin-content').value || '').trim();
   const dateStr = new Date().toISOString().split('T')[0];
@@ -2006,11 +2170,11 @@ function savePost() {
   if (editId) {
     const idx = posts.findIndex(x => x.id === editId);
     if (idx !== -1) {
-      posts[idx] = { ...posts[idx], title, excerpt, tags, image, content, date: dateStr };
+      posts[idx] = { ...posts[idx], title, excerpt, tags, lens, image, content, date: dateStr };
     }
   } else {
     const id = slugify(title) || Date.now().toString();
-    posts.unshift({ id, title, excerpt, tags, image, content, date: dateStr });
+    posts.unshift({ id, title, excerpt, tags, lens, image, content, date: dateStr });
   }
 
   savePosts();
@@ -2028,6 +2192,10 @@ function router() {
 
   if (!hash || hash === 'home') {
     renderHome();
+  } else if (hash === 'craft') {
+    renderHome('craft');
+  } else if (hash === 'life') {
+    renderHome('life');
   } else if (hash === 'about') {
     renderAbout();
   } else if (hash === 'admin') {
@@ -2047,15 +2215,16 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', async () => {
   loadTheme();
   isLoggedIn = localStorage.getItem('emmiti_logged_in') === 'true';
+  viewCounts = loadViewCounts();
 
   await initPosts();
   initPhotoGalleries();
   router();
 
-  // Hide loader
-  setTimeout(() => {
+  // Hide loader immediately after content is ready
+  requestAnimationFrame(() => {
     byId('loading-overlay').classList.add('hidden');
-  }, 300);
+  });
 
   byId('theme-toggle').addEventListener('click', toggleTheme);
 });
