@@ -1634,10 +1634,6 @@ function getViewCount(postId) {
 }
 
 function trackPostView(postId) {
-  const postBody = document.querySelector('.post-body');
-  if (!postBody) return;
-
-  let hasViewed = false;
   const viewedKey = `emmiti_viewed_${postId}`;
 
   // Check if already viewed in this session
@@ -1645,24 +1641,50 @@ function trackPostView(postId) {
     return;
   }
 
-  const handleScroll = () => {
-    const postHeight = postBody.scrollHeight;
-    const scrolled = window.scrollY + window.innerHeight - postBody.offsetTop;
-    const percentScrolled = (scrolled / postHeight) * 100;
+  const postHero = document.querySelector('.post-hero');
+  const postBody = document.querySelector('.post-body');
+  if (!postHero || !postBody) return;
 
-    // If user has read at least 50% of the post
-    if (percentScrolled >= 50 && !hasViewed) {
+  let hasViewed = false;
+
+  const checkScroll = () => {
+    if (hasViewed) return;
+
+    // Get the bottom position of the hero section
+    const heroBottom = postHero.offsetTop + postHero.offsetHeight;
+    // Get current scroll position
+    const scrollPosition = window.scrollY;
+
+    // Count view when user scrolls past the hero section into the content
+    if (scrollPosition > heroBottom - 100) {
       hasViewed = true;
       incrementViewCount(postId);
       sessionStorage.setItem(viewedKey, 'true');
-      window.removeEventListener('scroll', handleScroll);
+
+      // Update the view count display immediately
+      const viewCountEl = document.querySelector('.post-meta');
+      if (viewCountEl) {
+        const views = getViewCount(postId);
+        const post = posts.find(p => p.id === postId);
+        const readTime = calculateReadingTime(post?.content || '');
+        const date = post ? post.date || '' : '';
+        viewCountEl.innerHTML = `${date} · ${readTime} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">${views} views</span>`;
+      }
+
+      // Remove listener once counted
+      window.removeEventListener('scroll', checkScroll);
     }
   };
 
-  window.addEventListener('scroll', handleScroll);
-  // Clean up on hash change
+  // Check immediately in case already scrolled
+  checkScroll();
+
+  // Listen for scroll events
+  window.addEventListener('scroll', checkScroll);
+
+  // Cleanup on navigation
   const cleanup = () => {
-    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('scroll', checkScroll);
     window.removeEventListener('hashchange', cleanup);
   };
   window.addEventListener('hashchange', cleanup);
@@ -1753,6 +1775,9 @@ async function uploadImageToGitHub() {
         if (imagePathInput) {
           imagePathInput.value = path;
         }
+
+        // Update the preview
+        updateCoverPreview(path);
 
         fileInput.value = '';
         setTimeout(() => status.textContent = '', 3000);
@@ -2108,6 +2133,7 @@ function renderAdmin() {
           <div class="form-group">
             <label>Cover Image (Upload New)</label>
             <input type="hidden" id="admin-image-path" />
+            <div id="current-cover-preview" style="margin-bottom:0.75rem"></div>
             <input type="file" id="admin-upload-image" accept="image/*" style="margin-bottom:0.5rem" />
             <button type="button" class="btn btn-secondary btn-sm" onclick="uploadImageToGitHub()">
               📤 Upload to Photos
@@ -2186,7 +2212,29 @@ function editPost(id) {
   byId('admin-content').value = p.content || '';
   byId('form-title').textContent = 'Edit Post';
 
+  // Show current cover photo preview if exists
+  updateCoverPreview(p.image);
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateCoverPreview(imagePath) {
+  const previewEl = byId('current-cover-preview');
+  if (!previewEl) return;
+
+  if (imagePath && imagePath.trim()) {
+    previewEl.innerHTML = `
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:0.5rem">
+        <img src="${imagePath}" style="width:80px;height:80px;object-fit:cover;border-radius:0.25rem" onerror="this.style.display='none'" />
+        <div style="flex:1">
+          <div style="font-size:0.875rem;font-weight:500;color:var(--gold)">✓ Cover photo set</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">${imagePath}</div>
+        </div>
+      </div>
+    `;
+  } else {
+    previewEl.innerHTML = '<div style="font-size:0.875rem;color:var(--text-muted)">No cover photo set</div>';
+  }
 }
 
 function deletePost(id) {
