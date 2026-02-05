@@ -653,6 +653,30 @@
       font-weight: 500;
     }
 
+    .lens-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .lens-badge.craft {
+      background: rgba(0, 255, 0, 0.15);
+      color: #00ff00;
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    }
+
+    .lens-badge.life {
+      background: rgba(0, 212, 255, 0.15);
+      color: #00d4ff;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
+
     /* Empty State */
     .empty-state {
       text-align: center;
@@ -1904,15 +1928,15 @@ function renderHome(lensFilter = null) {
       const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
       const postImage = p.image ? `<div class="post-card-image" style="background-image:url('${p.image}')"></div>` : '';
       const views = getViewCount(p.id);
-      const lensLabel = p.lens ? (p.lens === 'craft' ? 'The "Craft" Lens' : 'The "Life" Lens') : '';
+      const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? '🎬 Craft' : '🌙 Life'}</span>` : '';
       html += `
         <div class="post-card" onclick="location.hash='post-${p.id}'">
           ${postImage}
           <div class="post-card-content">
             <h3>${p.title}</h3>
             <p class="excerpt">${p.excerpt || ''}</p>
-            <div class="post-tags">${tags}</div>
-            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read${lensLabel ? ' · ' + lensLabel : ''} · <span style="opacity: 0.6; font-size: 0.85em">${views} views</span></div>
+            <div class="post-tags">${lensBadge}${tags}</div>
+            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.7; font-size: 0.9em; font-weight: 500">👁 ${views} views</span></div>
           </div>
         </div>
       `;
@@ -1935,16 +1959,16 @@ function renderPost(id) {
   const heroImage = p.image || 'photos/mainscreen.jpg';
 
   const views = getViewCount(p.id);
-  const lensLabel = p.lens ? (p.lens === 'craft' ? 'The "Craft" Lens' : 'The "Life" Lens') : '';
+  const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? '🎬 Craft' : '🌙 Life'}</span>` : '';
   byId('main-content').innerHTML = `
     <main>
       <div class="post-view">
         <div class="post-hero" style="background-image: url('${heroImage}')">
           <div class="post-hero-content">
             <a href="#home" class="back-link" style="color:#fff;margin-bottom:1rem;display:inline-block">← Back to home</a>
-            <div class="post-tags" style="margin-bottom:1rem">${tags}</div>
+            <div class="post-tags" style="margin-bottom:1rem">${lensBadge}${tags}</div>
             <h1>${p.title}</h1>
-            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read${lensLabel ? ' · ' + lensLabel : ''} · <span style="opacity: 0.6; font-size: 0.9em">${views} views</span></div>
+            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">👁 ${views} views</span></div>
           </div>
         </div>
         <div class="post-body">
@@ -2162,7 +2186,8 @@ function savePost() {
 
   const excerpt = (byId('admin-excerpt').value || '').trim();
   const tags = (byId('admin-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
-  const lens = (byId('admin-lens').value || '').trim();
+  const lensValue = (byId('admin-lens').value || '').trim();
+  const lens = lensValue || undefined; // Don't save empty string, use undefined
   const image = (byId('admin-image').value || '').trim();
   const content = (byId('admin-content').value || '').trim();
   const dateStr = new Date().toISOString().split('T')[0];
@@ -2170,11 +2195,21 @@ function savePost() {
   if (editId) {
     const idx = posts.findIndex(x => x.id === editId);
     if (idx !== -1) {
-      posts[idx] = { ...posts[idx], title, excerpt, tags, lens, image, content, date: dateStr };
+      const updatedPost = { ...posts[idx], title, excerpt, tags, image, content, date: dateStr };
+      if (lens) {
+        updatedPost.lens = lens;
+      } else {
+        delete updatedPost.lens; // Remove lens if not set
+      }
+      posts[idx] = updatedPost;
     }
   } else {
     const id = slugify(title) || Date.now().toString();
-    posts.unshift({ id, title, excerpt, tags, lens, image, content, date: dateStr });
+    const newPost = { id, title, excerpt, tags, image, content, date: dateStr };
+    if (lens) {
+      newPost.lens = lens;
+    }
+    posts.unshift(newPost);
   }
 
   savePosts();
