@@ -1729,9 +1729,10 @@ async function uploadImageToGitHub() {
         {
           method: 'PUT',
           headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Authorization': `Bearer ${GITHUB_TOKEN}`,
             'Accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': '2022-11-28'
           },
           body: JSON.stringify({
             message: `Upload image: ${filename}`,
@@ -1786,7 +1787,11 @@ async function savePostsToGitHub() {
 
   try {
     const getRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/posts.json`, {
-      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' }
+      headers: {
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
     });
 
     let sha = null;
@@ -1800,7 +1805,12 @@ async function savePostsToGitHub() {
 
     const saveRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/posts.json`, {
       method: 'PUT',
-      headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      },
       body: JSON.stringify(body)
     });
 
@@ -1810,11 +1820,13 @@ async function savePostsToGitHub() {
         status.style.color = 'var(--gold)';
       }
     } else {
-      throw new Error('Failed');
+      const errorData = await saveRes.json();
+      console.error('GitHub API error:', errorData);
+      throw new Error(errorData.message || 'Failed');
     }
   } catch (err) {
     if (status) {
-      status.textContent = '❌ Error saving';
+      status.textContent = `❌ Error: ${err.message}`;
       status.style.color = 'var(--pink)';
     }
   }
@@ -1928,7 +1940,7 @@ function renderHome(lensFilter = null) {
       const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
       const postImage = p.image ? `<div class="post-card-image" style="background-image:url('${p.image}')"></div>` : '';
       const views = getViewCount(p.id);
-      const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? '🎬 Craft' : '🌙 Life'}</span>` : '';
+      const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
       html += `
         <div class="post-card" onclick="location.hash='post-${p.id}'">
           ${postImage}
@@ -1936,7 +1948,7 @@ function renderHome(lensFilter = null) {
             <h3>${p.title}</h3>
             <p class="excerpt">${p.excerpt || ''}</p>
             <div class="post-tags">${lensBadge}${tags}</div>
-            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.7; font-size: 0.9em; font-weight: 500">👁 ${views} views</span></div>
+            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.7; font-size: 0.9em; font-weight: 500">${views} views</span></div>
           </div>
         </div>
       `;
@@ -1959,7 +1971,7 @@ function renderPost(id) {
   const heroImage = p.image || 'photos/mainscreen.jpg';
 
   const views = getViewCount(p.id);
-  const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? '🎬 Craft' : '🌙 Life'}</span>` : '';
+  const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
   byId('main-content').innerHTML = `
     <main>
       <div class="post-view">
@@ -1968,7 +1980,7 @@ function renderPost(id) {
             <a href="#home" class="back-link" style="color:#fff;margin-bottom:1rem;display:inline-block">← Back to home</a>
             <div class="post-tags" style="margin-bottom:1rem">${lensBadge}${tags}</div>
             <h1>${p.title}</h1>
-            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">👁 ${views} views</span></div>
+            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">${views} views</span></div>
           </div>
         </div>
         <div class="post-body">
