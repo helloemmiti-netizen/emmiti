@@ -1707,10 +1707,10 @@ async function uploadImageToGitHub() {
   }
 
   if (!GITHUB_TOKEN) {
-    const token = prompt('Enter your GitHub Personal Access Token:');
+    const token = prompt('Enter your GitHub Personal Access Token (starts with ghp_ or github_pat_):');
     if (!token) return;
-    GITHUB_TOKEN = token;
-    localStorage.setItem('emmiti_github_token', token);
+    GITHUB_TOKEN = token.trim();
+    localStorage.setItem('emmiti_github_token', GITHUB_TOKEN);
   }
 
   status.textContent = 'Uploading...';
@@ -1757,14 +1757,24 @@ async function uploadImageToGitHub() {
         fileInput.value = '';
         setTimeout(() => status.textContent = '', 3000);
       } else {
-        throw new Error('Upload failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
       }
     };
 
     reader.readAsDataURL(file);
   } catch (err) {
-    status.textContent = '❌ Upload failed';
+    status.textContent = `❌ ${err.message}`;
     status.style.color = 'var(--pink)';
+
+    // If bad credentials, clear the token and prompt for new one
+    if (err.message.includes('Bad credentials') || err.message.includes('Unauthorized')) {
+      localStorage.removeItem('emmiti_github_token');
+      GITHUB_TOKEN = '';
+      if (confirm('Invalid GitHub token. Would you like to enter a new one and retry upload?')) {
+        setTimeout(() => uploadImageToGitHub(), 100);
+      }
+    }
   }
 }
 
@@ -1827,12 +1837,13 @@ async function savePostsToGitHub() {
       status.textContent = `❌ Error: ${err.message}`;
       status.style.color = 'var(--pink)';
     }
-    // If bad credentials, clear the token so user can re-enter
-    if (err.message.includes('Bad credentials')) {
+    // If bad credentials, clear the token and prompt for new one
+    if (err.message.includes('Bad credentials') || err.message.includes('Unauthorized')) {
       localStorage.removeItem('emmiti_github_token');
       GITHUB_TOKEN = '';
-      if (status) {
-        status.textContent += ' - Token cleared. Click again to re-enter.';
+      if (confirm('Invalid GitHub token. Would you like to enter a new one?')) {
+        // Recursively call to prompt for new token
+        setTimeout(() => savePostsToGitHub(), 100);
       }
     }
   }
