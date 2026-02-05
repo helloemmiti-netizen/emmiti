@@ -1742,19 +1742,17 @@ async function uploadImageToGitHub() {
       );
 
       if (response.ok) {
-        status.textContent = '✅ Uploaded! Refreshing photo list...';
+        status.textContent = '✅ Uploaded! Set as cover image.';
         status.style.color = 'var(--gold)';
 
         // Add to gallery photos array
         GALLERY_PHOTOS.push(path);
 
-        // Refresh dropdown
-        const select = byId('admin-image');
-        const option = document.createElement('option');
-        option.value = path;
-        option.textContent = filename;
-        select.appendChild(option);
-        select.value = path;
+        // Set the uploaded image path in a hidden field
+        const imagePathInput = byId('admin-image-path');
+        if (imagePathInput) {
+          imagePathInput.value = path;
+        }
 
         fileInput.value = '';
         setTimeout(() => status.textContent = '', 3000);
@@ -1774,13 +1772,13 @@ async function savePostsToGitHub() {
   const status = byId('github-status');
 
   if (!GITHUB_TOKEN) {
-    const token = prompt('Enter your GitHub Personal Access Token:');
+    const token = prompt('Enter your GitHub Personal Access Token (starts with ghp_ or github_pat_):');
     if (!token) {
       if (status) status.textContent = 'Cancelled';
       return;
     }
-    GITHUB_TOKEN = token;
-    localStorage.setItem('emmiti_github_token', token);
+    GITHUB_TOKEN = token.trim();
+    localStorage.setItem('emmiti_github_token', GITHUB_TOKEN);
   }
 
   if (status) status.textContent = 'Saving...';
@@ -1828,6 +1826,14 @@ async function savePostsToGitHub() {
     if (status) {
       status.textContent = `❌ Error: ${err.message}`;
       status.style.color = 'var(--pink)';
+    }
+    // If bad credentials, clear the token so user can re-enter
+    if (err.message.includes('Bad credentials')) {
+      localStorage.removeItem('emmiti_github_token');
+      GITHUB_TOKEN = '';
+      if (status) {
+        status.textContent += ' - Token cleared. Click again to re-enter.';
+      }
     }
   }
 }
@@ -2089,21 +2095,14 @@ function renderAdmin() {
           </div>
 
           <div class="form-group">
-            <label>Cover Image (Optional)</label>
-            <select id="admin-image">
-              <option value="">No image</option>
-              ${GALLERY_PHOTOS.map(p => `<option value="${p}">${p.replace('photos/', '')}</option>`).join('')}
-            </select>
-            <div class="form-hint">Select from your photos folder</div>
-          </div>
-
-          <div class="form-group">
-            <label>Upload New Image</label>
+            <label>Cover Image (Upload New)</label>
+            <input type="hidden" id="admin-image-path" />
             <input type="file" id="admin-upload-image" accept="image/*" style="margin-bottom:0.5rem" />
             <button type="button" class="btn btn-secondary btn-sm" onclick="uploadImageToGitHub()">
               📤 Upload to Photos
             </button>
             <div id="upload-status" class="status-msg" style="margin-top:0.5rem"></div>
+            <div class="form-hint">Image will be set as cover automatically after upload</div>
           </div>
 
           <div class="form-group">
@@ -2158,7 +2157,7 @@ function clearForm() {
   byId('admin-excerpt').value = '';
   byId('admin-tags').value = '';
   byId('admin-lens').value = '';
-  byId('admin-image').value = '';
+  byId('admin-image-path').value = '';
   byId('admin-content').value = '';
   byId('form-title').textContent = 'Create Post';
 }
@@ -2172,7 +2171,7 @@ function editPost(id) {
   byId('admin-excerpt').value = p.excerpt || '';
   byId('admin-tags').value = (p.tags || []).join(', ');
   byId('admin-lens').value = p.lens || '';
-  byId('admin-image').value = p.image || '';
+  byId('admin-image-path').value = p.image || '';
   byId('admin-content').value = p.content || '';
   byId('form-title').textContent = 'Edit Post';
 
@@ -2200,7 +2199,7 @@ function savePost() {
   const tags = (byId('admin-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
   const lensValue = (byId('admin-lens').value || '').trim();
   const lens = lensValue || undefined; // Don't save empty string, use undefined
-  const image = (byId('admin-image').value || '').trim();
+  const image = (byId('admin-image-path').value || '').trim();
   const content = (byId('admin-content').value || '').trim();
   const dateStr = new Date().toISOString().split('T')[0];
 
