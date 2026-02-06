@@ -1532,7 +1532,6 @@ const GALLERY_PHOTOS = [
 // ============================================
 let posts = [];
 let isLoggedIn = false;
-let viewCounts = {};
 let currentLensFilter = null; // null = all, 'craft' or 'life'
 
 // ============================================
@@ -1604,92 +1603,6 @@ function loadLocalPosts() {
 // ============================================
 // VIEW COUNT TRACKING
 // ============================================
-function loadViewCounts() {
-  try {
-    const raw = localStorage.getItem('emmiti_view_counts');
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
-}
-
-function saveViewCounts() {
-  try {
-    localStorage.setItem('emmiti_view_counts', JSON.stringify(viewCounts));
-  } catch (e) {
-    console.error('Failed to save view counts:', e);
-  }
-}
-
-function incrementViewCount(postId) {
-  if (!viewCounts[postId]) {
-    viewCounts[postId] = 0;
-  }
-  viewCounts[postId]++;
-  saveViewCounts();
-}
-
-function getViewCount(postId) {
-  return viewCounts[postId] || 0;
-}
-
-function trackPostView(postId) {
-  const viewedKey = `emmiti_viewed_${postId}`;
-
-  // Check if already viewed in this session
-  if (sessionStorage.getItem(viewedKey)) {
-    return;
-  }
-
-  const postHero = document.querySelector('.post-hero');
-  const postBody = document.querySelector('.post-body');
-  if (!postHero || !postBody) return;
-
-  let hasViewed = false;
-
-  const checkScroll = () => {
-    if (hasViewed) return;
-
-    // Get the bottom position of the hero section
-    const heroBottom = postHero.offsetTop + postHero.offsetHeight;
-    // Get current scroll position
-    const scrollPosition = window.scrollY;
-
-    // Count view when user scrolls past the hero section into the content
-    if (scrollPosition > heroBottom - 100) {
-      hasViewed = true;
-      incrementViewCount(postId);
-      sessionStorage.setItem(viewedKey, 'true');
-
-      // Update the view count display immediately
-      const viewCountEl = document.querySelector('.post-meta');
-      if (viewCountEl) {
-        const views = getViewCount(postId);
-        const post = posts.find(p => p.id === postId);
-        const readTime = calculateReadingTime(post?.content || '');
-        const date = post ? post.date || '' : '';
-        viewCountEl.innerHTML = `${date} · ${readTime} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">${views} views</span>`;
-      }
-
-      // Remove listener once counted
-      window.removeEventListener('scroll', checkScroll);
-    }
-  };
-
-  // Check immediately in case already scrolled
-  checkScroll();
-
-  // Listen for scroll events
-  window.addEventListener('scroll', checkScroll);
-
-  // Cleanup on navigation
-  const cleanup = () => {
-    window.removeEventListener('scroll', checkScroll);
-    window.removeEventListener('hashchange', cleanup);
-  };
-  window.addEventListener('hashchange', cleanup);
-}
-
 async function fetchPostsFromGitHub() {
   try {
     const res = await fetch(POSTS_JSON_URL + '?t=' + Date.now());
@@ -1981,7 +1894,6 @@ function renderHome(lensFilter = null) {
     filteredPosts.forEach(p => {
       const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
       const postImage = p.image ? `<div class="post-card-image" style="background-image:url('${p.image}')"></div>` : '';
-      const views = getViewCount(p.id);
       const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
       html += `
         <div class="post-card" onclick="location.hash='post-${p.id}'">
@@ -1990,7 +1902,7 @@ function renderHome(lensFilter = null) {
             <h3>${p.title}</h3>
             <p class="excerpt">${p.excerpt || ''}</p>
             <div class="post-tags">${lensBadge}${tags}</div>
-            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.7; font-size: 0.9em; font-weight: 500">${views} views</span></div>
+            <div class="meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
           </div>
         </div>
       `;
@@ -2012,7 +1924,6 @@ function renderPost(id) {
   const tags = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
   const heroImage = p.image || 'photos/mainscreen.jpg';
 
-  const views = getViewCount(p.id);
   const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
   byId('main-content').innerHTML = `
     <main>
@@ -2022,7 +1933,7 @@ function renderPost(id) {
             <a href="#home" class="back-link" style="color:#fff;margin-bottom:1rem;display:inline-block">← Back to home</a>
             <div class="post-tags" style="margin-bottom:1rem">${lensBadge}${tags}</div>
             <h1>${p.title}</h1>
-            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read · <span style="opacity: 0.8; font-size: 0.95em; font-weight: 500">${views} views</span></div>
+            <div class="post-meta">${p.date || ''} · ${calculateReadingTime(p.content)} min read</div>
           </div>
         </div>
         <div class="post-body">
@@ -2033,9 +1944,6 @@ function renderPost(id) {
   `;
 
   window.scrollTo(0, 0);
-
-  // Start tracking view for this post
-  setTimeout(() => trackPostView(p.id), 500);
 }
 
 function renderAbout() {
@@ -2320,7 +2228,6 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', async () => {
   loadTheme();
   isLoggedIn = localStorage.getItem('emmiti_logged_in') === 'true';
-  viewCounts = loadViewCounts();
 
   await initPosts();
   initPhotoGalleries();
