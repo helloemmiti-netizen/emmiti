@@ -1399,15 +1399,6 @@
       box-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
     }
   </style>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'GA_MEASUREMENT_ID');
-  </script>
 </head>
 <body>
   <div class="loading-overlay" id="loading-overlay">
@@ -2082,27 +2073,6 @@ function renderAdmin() {
           <div id="github-status" class="status-msg" style="margin-top:0.5rem;text-align:center"></div>
         </div>
 
-        <div class="card">
-          <h3>📊 Analytics</h3>
-          <div class="card-subtitle">View your site traffic</div>
-          <p style="margin:1rem 0;color:var(--text-muted);font-size:0.9rem">
-            To see detailed analytics about your visitors, page views, and traffic sources, you'll need to:
-          </p>
-          <ol style="margin:1rem 0;padding-left:1.5rem;color:var(--text-secondary);font-size:0.9rem;line-height:1.6">
-            <li>Create a free Google Analytics account at <a href="https://analytics.google.com" target="_blank" style="color:var(--gold)">analytics.google.com</a></li>
-            <li>Set up a new GA4 property for your website</li>
-            <li>Copy your Measurement ID (starts with G-)</li>
-            <li>Replace <code style="background:var(--bg-tertiary);padding:0.2rem 0.4rem;border-radius:0.25rem;font-size:0.85rem">GA_MEASUREMENT_ID</code> in the code with your actual ID</li>
-          </ol>
-          <div style="margin-top:1rem;padding:1rem;background:var(--bg-tertiary);border-radius:var(--radius);border:1px solid var(--border)">
-            <div style="font-size:0.85rem;font-weight:500;margin-bottom:0.5rem">Current Status:</div>
-            <div style="font-size:0.9rem;color:var(--text-muted)">⚠️ Google Analytics not configured yet</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem">Replace GA_MEASUREMENT_ID in index.html with your tracking ID</div>
-          </div>
-          <a href="https://analytics.google.com" target="_blank" class="btn btn-secondary" style="width:100%;margin-top:1rem;text-align:center;display:block;text-decoration:none">
-            Open Google Analytics →
-          </a>
-        </div>
       </div>
     </main>
   `;
