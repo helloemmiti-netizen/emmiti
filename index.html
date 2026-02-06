@@ -312,6 +312,96 @@
       z-index: 0;
     }
 
+    /* Decorative particles in main content area */
+    .content-particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Dots */
+    .particle-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+      animation: sparkle 4s ease-in-out infinite;
+    }
+
+    /* Small lines */
+    .particle-line {
+      width: 25px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), transparent);
+      box-shadow: 0 0 8px var(--pink);
+      animation: drift 8s ease-in-out infinite alternate;
+    }
+
+    /* Tiny hearts */
+    .particle-heart-small {
+      width: 12px;
+      height: 11px;
+      background: var(--pink);
+      transform: rotate(-45deg);
+      box-shadow: 0 0 12px var(--pink);
+      animation: pulse 3s ease-in-out infinite;
+      opacity: 0.6;
+    }
+
+    .particle-heart-small::before,
+    .particle-heart-small::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 11px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .particle-heart-small::before {
+      top: -5.5px;
+      left: 0;
+    }
+
+    .particle-heart-small::after {
+      left: 5.5px;
+      top: 0;
+    }
+
+    /* Small circles */
+    .particle-circle-small {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      box-shadow: 0 0 12px var(--blue);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    /* Tiny stars */
+    .particle-star-small {
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      box-shadow: 0 0 10px var(--gold);
+      animation: sparkle 3.5s ease-in-out infinite;
+    }
+
+    /* Position particles in main content */
+    main {
+      position: relative;
+    }
+
+    .posts-section {
+      position: relative;
+    }
+
+    .post-view {
+      position: relative;
+    }
+
     .photo-strip {
       display: flex;
       flex-direction: column;
@@ -1913,6 +2003,16 @@ function renderHome(lensFilter = null) {
     <div class="hero-banner">
     </div>
     <main>
+      <!-- Decorative particles -->
+      <div class="content-particle particle-dot" style="top: 15%; left: 8%; animation-delay: 0.5s;"></div>
+      <div class="content-particle particle-star-small" style="top: 25%; right: 10%; animation-delay: 1s;"></div>
+      <div class="content-particle particle-circle-small" style="top: 45%; left: 5%; animation-delay: 1.5s;"></div>
+      <div class="content-particle particle-line" style="top: 60%; right: 12%; transform: rotate(-20deg); animation-delay: 0.8s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 75%; left: 15%; animation-delay: 2s;"></div>
+      <div class="content-particle particle-dot" style="top: 85%; right: 8%; animation-delay: 0.3s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-star-small" style="top: 35%; left: 90%; animation-delay: 1.8s;"></div>
+      <div class="content-particle particle-circle-small" style="top: 55%; right: 6%; animation-delay: 1.2s; border-color: var(--pink); box-shadow: 0 0 12px var(--pink);"></div>
+
       <div class="posts-section">
   `;
 
@@ -1973,6 +2073,17 @@ function renderPost(id) {
   const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
   byId('main-content').innerHTML = `
     <main>
+      <!-- Decorative particles for post view -->
+      <div class="content-particle particle-star-small" style="top: 12%; left: 5%; animation-delay: 0.5s;"></div>
+      <div class="content-particle particle-dot" style="top: 22%; right: 8%; animation-delay: 1s;"></div>
+      <div class="content-particle particle-circle-small" style="top: 35%; left: 3%; animation-delay: 1.5s;"></div>
+      <div class="content-particle particle-line" style="top: 48%; right: 10%; transform: rotate(15deg); animation-delay: 0.8s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 60%; left: 7%; animation-delay: 2s;"></div>
+      <div class="content-particle particle-dot" style="top: 72%; right: 6%; animation-delay: 0.3s; background: var(--pink); box-shadow: 0 0 10px var(--pink);"></div>
+      <div class="content-particle particle-star-small" style="top: 82%; left: 4%; animation-delay: 1.8s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-circle-small" style="top: 28%; right: 5%; animation-delay: 1.2s; border-color: var(--gold); box-shadow: 0 0 12px var(--gold);"></div>
+      <div class="content-particle particle-line" style="top: 90%; right: 12%; transform: rotate(-30deg); animation-delay: 0.6s; background: linear-gradient(90deg, var(--blue), transparent); box-shadow: 0 0 8px var(--blue);"></div>
+
       <div class="post-view">
         <div class="post-hero" style="background-image: url('${heroImage}')">
           <div class="post-hero-content">
