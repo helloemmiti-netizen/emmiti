@@ -273,6 +273,45 @@
       50% { transform: rotate(-45deg) scale(1.2); opacity: 1; }
     }
 
+    /* Additional floating animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes drift {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-30px) translateY(-30px); }
+    }
+
+    /* Floating Stars */
+    .neon-star {
+      width: 15px;
+      height: 15px;
+      background: var(--gold);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      box-shadow: 0 0 15px var(--gold);
+      animation: sparkle 3s ease-in-out infinite;
+    }
+
+    /* Floating Circles */
+    .neon-circle {
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      box-shadow: 0 0 15px var(--blue);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    /* Additional particles for center content */
+    .center-content .neon-doodle {
+      z-index: 0;
+    }
+
     .photo-strip {
       display: flex;
       flex-direction: column;
@@ -1411,6 +1450,9 @@
       <div class="neon-doodle neon-line-1"></div>
       <div class="neon-doodle neon-line-2"></div>
       <div class="neon-doodle neon-spiral"></div>
+      <div class="neon-doodle neon-star" style="top: 35%; left: 25px; animation-delay: 0.5s;"></div>
+      <div class="neon-doodle neon-circle" style="top: 65%; right: 15px; width: 30px; height: 30px; animation-delay: 1s;"></div>
+      <div class="neon-doodle neon-star" style="bottom: 15%; left: 40px; animation-delay: 1.5s;"></div>
       <div class="photo-strip" id="left-photos"></div>
     </div>
 
@@ -1475,6 +1517,10 @@
       <div class="neon-doodle neon-line-1"></div>
       <div class="neon-doodle neon-line-2"></div>
       <div class="neon-doodle neon-heart"></div>
+      <div class="neon-doodle neon-circle" style="top: 18%; left: 30px; width: 25px; height: 25px; animation-delay: 0.3s;"></div>
+      <div class="neon-doodle neon-star" style="top: 50%; right: 20px; animation-delay: 0.8s;"></div>
+      <div class="neon-doodle neon-circle" style="bottom: 20%; right: 35px; width: 20px; height: 20px; animation-delay: 1.2s; border-color: var(--pink);"></div>
+      <div class="neon-doodle neon-star" style="bottom: 45%; left: 15px; animation-delay: 2s; background: var(--blue); box-shadow: 0 0 15px var(--blue);"></div>
       <div class="photo-strip" id="right-photos"></div>
     </div>
   </div>
