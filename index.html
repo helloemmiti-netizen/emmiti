@@ -2003,15 +2003,38 @@ function renderHome(lensFilter = null) {
     <div class="hero-banner">
     </div>
     <main>
-      <!-- Decorative particles -->
-      <div class="content-particle particle-dot" style="top: 15%; left: 8%; animation-delay: 0.5s;"></div>
-      <div class="content-particle particle-star-small" style="top: 25%; right: 10%; animation-delay: 1s;"></div>
-      <div class="content-particle particle-circle-small" style="top: 45%; left: 5%; animation-delay: 1.5s;"></div>
-      <div class="content-particle particle-line" style="top: 60%; right: 12%; transform: rotate(-20deg); animation-delay: 0.8s;"></div>
-      <div class="content-particle particle-heart-small" style="top: 75%; left: 15%; animation-delay: 2s;"></div>
-      <div class="content-particle particle-dot" style="top: 85%; right: 8%; animation-delay: 0.3s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
-      <div class="content-particle particle-star-small" style="top: 35%; left: 90%; animation-delay: 1.8s;"></div>
-      <div class="content-particle particle-circle-small" style="top: 55%; right: 6%; animation-delay: 1.2s; border-color: var(--pink); box-shadow: 0 0 12px var(--pink);"></div>
+      <!-- Decorative particles - massively increased -->
+
+      <!-- DOTS (200% increase = 3x original = 6 total) -->
+      <div class="content-particle particle-dot" style="top: 8%; left: 4%; animation-delay: 0.5s;"></div>
+      <div class="content-particle particle-dot" style="top: 18%; right: 7%; animation-delay: 0.3s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-dot" style="top: 32%; left: 6%; animation-delay: 1.2s; background: var(--pink); box-shadow: 0 0 10px var(--pink);"></div>
+      <div class="content-particle particle-dot" style="top: 52%; right: 5%; animation-delay: 0.8s;"></div>
+      <div class="content-particle particle-dot" style="top: 68%; left: 3%; animation-delay: 1.5s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-dot" style="top: 85%; right: 8%; animation-delay: 0.3s;"></div>
+
+      <!-- LINES (200% increase = 3x original = 6 total) -->
+      <div class="content-particle particle-line" style="top: 12%; left: 7%; transform: rotate(25deg); animation-delay: 0.8s;"></div>
+      <div class="content-particle particle-line" style="top: 28%; right: 10%; transform: rotate(-15deg); animation-delay: 1.3s;"></div>
+      <div class="content-particle particle-line" style="top: 42%; left: 8%; transform: rotate(40deg); animation-delay: 0.6s; background: linear-gradient(90deg, var(--blue), transparent); box-shadow: 0 0 8px var(--blue);"></div>
+      <div class="content-particle particle-line" style="top: 58%; right: 6%; transform: rotate(-30deg); animation-delay: 1.8s;"></div>
+      <div class="content-particle particle-line" style="top: 72%; left: 5%; transform: rotate(15deg); animation-delay: 1.1s; background: linear-gradient(90deg, var(--pink), transparent); box-shadow: 0 0 8px var(--pink);"></div>
+      <div class="content-particle particle-line" style="top: 88%; right: 9%; transform: rotate(-20deg); animation-delay: 0.4s;"></div>
+
+      <!-- HEARTS (50% increase = 1.5x original = 3 total) -->
+      <div class="content-particle particle-heart-small" style="top: 22%; left: 9%; animation-delay: 2s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 48%; right: 11%; animation-delay: 1.6s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 75%; left: 7%; animation-delay: 2.3s;"></div>
+
+      <!-- STARS (50% increase = 1.5x original = 3 total) -->
+      <div class="content-particle particle-star-small" style="top: 16%; right: 12%; animation-delay: 1s;"></div>
+      <div class="content-particle particle-star-small" style="top: 38%; left: 10%; animation-delay: 1.8s;"></div>
+      <div class="content-particle particle-star-small" style="top: 62%; right: 8%; animation-delay: 1.4s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+
+      <!-- CIRCLES (keep similar count for variety) -->
+      <div class="content-particle particle-circle-small" style="top: 25%; left: 5%; animation-delay: 1.5s;"></div>
+      <div class="content-particle particle-circle-small" style="top: 45%; right: 6%; animation-delay: 1.2s; border-color: var(--pink); box-shadow: 0 0 12px var(--pink);"></div>
+      <div class="content-particle particle-circle-small" style="top: 80%; left: 11%; animation-delay: 0.9s; border-color: var(--gold); box-shadow: 0 0 12px var(--gold);"></div>
 
       <div class="posts-section">
   `;
@@ -2073,16 +2096,38 @@ function renderPost(id) {
   const lensBadge = p.lens ? `<span class="lens-badge ${p.lens}">${p.lens === 'craft' ? 'Craft' : 'Life'}</span>` : '';
   byId('main-content').innerHTML = `
     <main>
-      <!-- Decorative particles for post view -->
+      <!-- Decorative particles for post view - massively increased -->
+
+      <!-- DOTS (200% increase = 3x original = 6 total) -->
+      <div class="content-particle particle-dot" style="top: 6%; left: 3%; animation-delay: 1s;"></div>
+      <div class="content-particle particle-dot" style="top: 18%; right: 7%; animation-delay: 0.3s; background: var(--pink); box-shadow: 0 0 10px var(--pink);"></div>
+      <div class="content-particle particle-dot" style="top: 34%; left: 4%; animation-delay: 1.4s;"></div>
+      <div class="content-particle particle-dot" style="top: 50%; right: 6%; animation-delay: 0.7s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-dot" style="top: 66%; left: 5%; animation-delay: 1.1s;"></div>
+      <div class="content-particle particle-dot" style="top: 82%; right: 4%; animation-delay: 0.5s; background: var(--gold); box-shadow: 0 0 10px var(--gold);"></div>
+
+      <!-- LINES (200% increase = 3x original = 6 total) -->
+      <div class="content-particle particle-line" style="top: 10%; right: 9%; transform: rotate(20deg); animation-delay: 0.8s;"></div>
+      <div class="content-particle particle-line" style="top: 24%; left: 6%; transform: rotate(-25deg); animation-delay: 1.5s; background: linear-gradient(90deg, var(--blue), transparent); box-shadow: 0 0 8px var(--blue);"></div>
+      <div class="content-particle particle-line" style="top: 40%; right: 8%; transform: rotate(35deg); animation-delay: 0.6s;"></div>
+      <div class="content-particle particle-line" style="top: 56%; left: 7%; transform: rotate(-15deg); animation-delay: 1.9s; background: linear-gradient(90deg, var(--pink), transparent); box-shadow: 0 0 8px var(--pink);"></div>
+      <div class="content-particle particle-line" style="top: 72%; right: 10%; transform: rotate(25deg); animation-delay: 1.2s;"></div>
+      <div class="content-particle particle-line" style="top: 88%; left: 8%; transform: rotate(-30deg); animation-delay: 0.4s;"></div>
+
+      <!-- HEARTS (50% increase = 1.5x original = 3 total) -->
+      <div class="content-particle particle-heart-small" style="top: 14%; right: 11%; animation-delay: 2s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 44%; left: 9%; animation-delay: 2.4s;"></div>
+      <div class="content-particle particle-heart-small" style="top: 74%; right: 7%; animation-delay: 1.7s;"></div>
+
+      <!-- STARS (50% increase = 1.5x original = 3 total) -->
       <div class="content-particle particle-star-small" style="top: 12%; left: 5%; animation-delay: 0.5s;"></div>
-      <div class="content-particle particle-dot" style="top: 22%; right: 8%; animation-delay: 1s;"></div>
-      <div class="content-particle particle-circle-small" style="top: 35%; left: 3%; animation-delay: 1.5s;"></div>
-      <div class="content-particle particle-line" style="top: 48%; right: 10%; transform: rotate(15deg); animation-delay: 0.8s;"></div>
-      <div class="content-particle particle-heart-small" style="top: 60%; left: 7%; animation-delay: 2s;"></div>
-      <div class="content-particle particle-dot" style="top: 72%; right: 6%; animation-delay: 0.3s; background: var(--pink); box-shadow: 0 0 10px var(--pink);"></div>
-      <div class="content-particle particle-star-small" style="top: 82%; left: 4%; animation-delay: 1.8s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
-      <div class="content-particle particle-circle-small" style="top: 28%; right: 5%; animation-delay: 1.2s; border-color: var(--gold); box-shadow: 0 0 12px var(--gold);"></div>
-      <div class="content-particle particle-line" style="top: 90%; right: 12%; transform: rotate(-30deg); animation-delay: 0.6s; background: linear-gradient(90deg, var(--blue), transparent); box-shadow: 0 0 8px var(--blue);"></div>
+      <div class="content-particle particle-star-small" style="top: 46%; right: 12%; animation-delay: 1.8s; background: var(--blue); box-shadow: 0 0 10px var(--blue);"></div>
+      <div class="content-particle particle-star-small" style="top: 78%; left: 4%; animation-delay: 1.3s;"></div>
+
+      <!-- CIRCLES (keep similar count for variety) -->
+      <div class="content-particle particle-circle-small" style="top: 20%; left: 3%; animation-delay: 1.5s;"></div>
+      <div class="content-particle particle-circle-small" style="top: 52%; right: 5%; animation-delay: 1.2s; border-color: var(--gold); box-shadow: 0 0 12px var(--gold);"></div>
+      <div class="content-particle particle-circle-small" style="top: 84%; left: 6%; animation-delay: 0.9s; border-color: var(--pink); box-shadow: 0 0 12px var(--pink);"></div>
 
       <div class="post-view">
         <div class="post-hero" style="background-image: url('${heroImage}')">
