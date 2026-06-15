@@ -2628,7 +2628,7 @@ const EmmitiFX = (() => {
 
   return { celebrate, launchAt, setEnabled, _disabled: false };
 })();
-window.addEventListener('hashchange', router);
+
 window.addEventListener('load', async () => {
   loadTheme();
   const yr = byId('copyright-year'); if (yr) yr.textContent = new Date().getFullYear();
@@ -2637,6 +2637,11 @@ window.addEventListener('load', async () => {
   await initPosts();
   initPhotoGalleries();
   router();
+await initPosts();
+initPhotoGalleries();
+router();
+window.addEventListener('hashchange', router); // ADD THIS LINE
+
 
   // Hide loader immediately after content is ready
   requestAnimationFrame(() => {
