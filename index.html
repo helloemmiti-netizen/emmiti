@@ -667,18 +667,19 @@
     }
 
     @keyframes neonPulse {
-      0%   { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg); }
-      33%  { filter: brightness(0.72) saturate(1.4) hue-rotate(18deg); }
-      66%  { filter: brightness(0.68) saturate(1.3) hue-rotate(-12deg); }
-      100% { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg); }
+      0%   { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg);   }
+      25%  { filter: brightness(0.70) saturate(1.3) hue-rotate(20deg);  }
+      50%  { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg);   }
+      75%  { filter: brightness(0.70) saturate(1.3) hue-rotate(-20deg); }
+      100% { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg);   }
     }
 
     @keyframes neonDrift {
-      0%   { transform: translateX(0%)  scale(1.0); }
-      25%  { transform: translateX(8%)  scale(1.02); }
-      50%  { transform: translateX(12%) scale(1.0); }
-      75%  { transform: translateX(4%)  scale(1.02); }
-      100% { transform: translateX(0%)  scale(1.0); }
+      0%   { transform: translateX(0%)   scale(1.00); }
+      25%  { transform: translateX(10%)  scale(1.02); }
+      50%  { transform: translateX(0%)   scale(1.00); }
+      75%  { transform: translateX(-10%) scale(1.02); }
+      100% { transform: translateX(0%)   scale(1.00); }
     }
 
     .hero-banner::after {
