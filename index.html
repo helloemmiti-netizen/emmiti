@@ -525,19 +525,25 @@
     }
 
     #logo {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      background: var(--gradient-accent);
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: #050508;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-family: 'Fraunces', serif;
-      font-size: 22px;
-      color: #fff;
-      box-shadow: 0 0 25px rgba(255, 20, 147, 0.5);
+      position: relative;
+      box-shadow:
+        0 0 0 2px #FF1493,
+        0 0 20px rgba(255,20,147,0.6),
+        0 0 40px rgba(0,212,255,0.3);
       animation: logoPulse 3s ease-in-out infinite;
+      overflow: hidden;
+    }
+    #logo svg {
+      width: 56px;
+      height: 56px;
+      filter: drop-shadow(0 0 8px #FFD700);
     }
 
     @keyframes logoPulse {
@@ -635,7 +641,7 @@
     /* Hero Banner */
     .hero-banner {
       width: 100%;
-      height: min(70vw, 520px);
+      height: 560px;
       background-color: #000;
       position: relative;
       display: flex;
@@ -654,11 +660,15 @@
 
     .hero-video {
       position: absolute;
-      inset: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      /* Portrait video in landscape banner: fit by width so full width shows */
       width: 100%;
-      height: 100%;
+      height: auto;
+      min-height: 100%;
       object-fit: cover;
-      object-position: center center;
+      object-position: center 30%;
       z-index: 1;
       opacity: 0.92;
     }
@@ -1184,8 +1194,7 @@
       }
 
       .hero-banner {
-        height: 75vw;
-        max-height: 420px;
+        height: 340px;
       }
 
       .hero-text h1 {
@@ -1576,7 +1585,30 @@
       <header>
         <div class="header-inner">
           <div id="brand" onclick="location.hash='home'">
-            <div id="logo">E</div>
+            <div id="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="eGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="#FFD700"/>
+                  <stop offset="50%"  stop-color="#FF1493"/>
+                  <stop offset="100%" stop-color="#00D4FF"/>
+                </linearGradient>
+              </defs>
+              <rect x="6"  y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="20" y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="34" y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="48" y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="62" y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="76" y="3"  width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="6"  y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="20" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="34" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="48" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="62" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="76" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <text x="50" y="78" font-size="78" font-family="Georgia, serif" font-weight="700" text-anchor="middle" fill="url(#eGrad)">E</text>
+            </svg>
+          </div>
             <div>
               <div id="site-title">Emmiti ?</div>
               <div class="tagline">Emmiti ne gola ?</div>
@@ -1646,7 +1678,7 @@
 // >>> CHANGE THIS to your own private word. It is the only gate on the admin panel.
 // Note: anyone who views page source can read this, so it deters casual access only,
 // it is NOT real security. Keep it non-obvious and don't reuse a real password.
-const ADMIN_PASS = 'emmiti-change-me-7Qx';
+const ADMIN_PASS = 'Rohan@612';
 const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
 const POSTS_JSON_URL = 'posts.json';
 const POSTS_JSON_FALLBACK = 'https://raw.githubusercontent.com/helloemmiti-netizen/emmiti/main/posts.json';
@@ -1722,7 +1754,7 @@ function initPhotoGalleries() {
 
   // Reduce photos on mobile for faster loading
   const isMobile = window.innerWidth <= 768;
-  const photoCount = isMobile ? 6 : GALLERY_PHOTOS.length;
+  const photoCount = isMobile ? 10 : GALLERY_PHOTOS.length;
 
   // Split photos between left and right
   const shuffled = [...GALLERY_PHOTOS].sort(() => Math.random() - 0.5).slice(0, photoCount);
@@ -2032,10 +2064,7 @@ function renderHome(lensFilter = null) {
 
   let html = `
     <div class="hero-banner">
-      <video class="hero-video" autoplay muted loop playsinline preload="auto"
-        webkit-playsinline x-webkit-airplay="deny"
-        disablePictureInPicture disableRemotePlayback
-        poster="photos/mainscreen.webp">
+      <video class="hero-video" autoplay muted loop playsinline preload="auto">
         <source src="photos/hero.mp4" type="video/mp4">
       </video>
       <div class="hero-video-overlay"></div>
@@ -2788,25 +2817,6 @@ window.addEventListener('load', async () => {
 
   await initPosts();
   initPhotoGalleries();
-
-  // On mobile, if video hasn't started playing in 2s, hide it (poster shows instead)
-  const heroVideo = document.querySelector('.hero-video');
-  if (heroVideo) {
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      // Try to force play (needed on some iOS)
-      heroVideo.play().catch(() => {});
-      setTimeout(() => {
-        if (heroVideo.paused || heroVideo.readyState < 3) {
-          heroVideo.style.display = 'none'; // poster image takes over
-        }
-      }, 2500);
-    }
-    heroVideo.addEventListener('canplay', () => {
-      heroVideo.style.opacity = '0.92';
-    });
-  }
-
   router();
 await initPosts();
 initPhotoGalleries();
