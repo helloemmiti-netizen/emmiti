@@ -525,19 +525,27 @@
     }
 
     #logo {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      background: var(--gradient-accent);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: #050508;
+      border: 2px solid transparent;
+      background-clip: padding-box;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-family: 'Fraunces', serif;
-      font-size: 22px;
-      color: #fff;
-      box-shadow: 0 0 25px rgba(255, 20, 147, 0.5);
+      position: relative;
+      box-shadow:
+        0 0 0 2px #FF1493,
+        0 0 20px rgba(255,20,147,0.6),
+        0 0 40px rgba(0,212,255,0.3);
       animation: logoPulse 3s ease-in-out infinite;
+      overflow: visible;
+    }
+    #logo svg {
+      width: 30px;
+      height: 30px;
+      filter: drop-shadow(0 0 6px #FFD700);
     }
 
     @keyframes logoPulse {
@@ -1590,7 +1598,39 @@
       <header>
         <div class="header-inner">
           <div id="brand" onclick="location.hash='home'">
-            <div id="logo">E</div>
+            <div id="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="eGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="#FFD700"/>
+                  <stop offset="50%"  stop-color="#FF1493"/>
+                  <stop offset="100%" stop-color="#00D4FF"/>
+                </linearGradient>
+              </defs>
+              <!-- Film strip holes top -->
+              <rect x="8"  y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="22" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="36" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="50" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="64" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="78" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <!-- Film strip holes bottom -->
+              <rect x="8"  y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="22" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="36" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="50" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="64" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <rect x="78" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+              <!-- Bold E -->
+              <text x="50" y="76"
+                font-size="72"
+                font-family="Georgia, serif"
+                font-weight="700"
+                text-anchor="middle"
+                fill="url(#eGrad)"
+              >E</text>
+            </svg>
+          </div>
             <div>
               <div id="site-title">Emmiti ?</div>
               <div class="tagline">Emmiti ne gola ?</div>
@@ -1660,7 +1700,7 @@
 // >>> CHANGE THIS to your own private word. It is the only gate on the admin panel.
 // Note: anyone who views page source can read this, so it deters casual access only,
 // it is NOT real security. Keep it non-obvious and don't reuse a real password.
-const ADMIN_PASS = 'emmiti-change-me-7Qx';
+const ADMIN_PASS = 'Rohan@612';
 const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
 const POSTS_JSON_URL = 'posts.json';
 const POSTS_JSON_FALLBACK = 'https://raw.githubusercontent.com/helloemmiti-netizen/emmiti/main/posts.json';
