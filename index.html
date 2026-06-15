@@ -1869,7 +1869,8 @@ async function uploadImageToGitHub() {
         }
 
         // Update the preview
-        updateCoverPreview(path);
+        const blobUrl = URL.createObjectURL(file);
+        updateCoverPreview(path, blobUrl);
 
         fileInput.value = '';
         setTimeout(() => status.textContent = '', 3000);
@@ -2292,7 +2293,7 @@ function renderAdmin() {
             <label>Cover Image (Upload New)</label>
             <input type="hidden" id="admin-image-path" />
             <div id="current-cover-preview" style="margin-bottom:0.75rem"></div>
-            <input type="file" id="admin-upload-image" accept="image/*" style="margin-bottom:0.5rem" />
+            <input type="file" id="admin-upload-image" accept="image/*" style="margin-bottom:0.5rem" onchange="previewSelectedImage(this)" />
             <button type="button" class="btn btn-secondary btn-sm" onclick="uploadImageToGitHub()">
               📤 Upload to Photos
             </button>
@@ -2321,6 +2322,17 @@ function renderAdmin() {
           <hr>
           <button class="btn btn-primary" style="width:100%" onclick="savePostsToGitHub()">💾 Save to GitHub</button>
           <div id="github-status" class="status-msg" style="margin-top:0.5rem;text-align:center"></div>
+
+          <hr>
+
+          <h3 style="font-family:'Fraunces',serif;font-size:1.1rem;margin-bottom:0.5rem">🖼 Mainscreen Photo</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">This is the hero image shown on the home page banner</p>
+          <div id="mainscreen-preview" style="margin-bottom:0.75rem">
+            <img src="photos/mainscreen.webp" style="width:100%;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)" onerror="this.style.display='none'" />
+          </div>
+          <input type="file" id="mainscreen-upload" accept="image/*" style="margin-bottom:0.5rem" onchange="previewMainscreen(this)" />
+          <button type="button" class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="uploadMainscreen()">📤 Upload New Mainscreen</button>
+          <div id="mainscreen-status" class="status-msg" style="margin-top:0.5rem;text-align:center"></div>
         </div>
 
       </div>
@@ -2377,14 +2389,34 @@ function editPost(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function updateCoverPreview(imagePath) {
+// Show local blob preview instantly when user selects a file
+function previewSelectedImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const blobUrl = URL.createObjectURL(file);
+  const previewEl = byId('current-cover-preview');
+  if (!previewEl) return;
+  previewEl.innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:0.5rem">
+      <img src="${blobUrl}" style="width:80px;height:80px;object-fit:cover;border-radius:0.25rem" />
+      <div style="flex:1">
+        <div style="font-size:0.875rem;font-weight:500;color:var(--text-muted)">⏳ Selected — click Upload to save</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">${file.name}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateCoverPreview(imagePath, blobUrl) {
   const previewEl = byId('current-cover-preview');
   if (!previewEl) return;
 
   if (imagePath && imagePath.trim()) {
+    // Use blob URL for instant display if available, fallback to path
+    const displaySrc = blobUrl || imagePath;
     previewEl.innerHTML = `
       <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:0.5rem">
-        <img src="${imagePath}" style="width:80px;height:80px;object-fit:cover;border-radius:0.25rem" onerror="this.style.display='none'" />
+        <img src="${displaySrc}" style="width:80px;height:80px;object-fit:cover;border-radius:0.25rem" onerror="this.src='${imagePath}'" />
         <div style="flex:1">
           <div style="font-size:0.875rem;font-weight:500;color:var(--gold)">✓ Cover photo set</div>
           <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem">${imagePath}</div>
@@ -2393,6 +2425,76 @@ function updateCoverPreview(imagePath) {
     `;
   } else {
     previewEl.innerHTML = '<div style="font-size:0.875rem;color:var(--text-muted)">No cover photo set</div>';
+  }
+}
+
+// Preview mainscreen before upload
+function previewMainscreen(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const blobUrl = URL.createObjectURL(file);
+  const el = byId('mainscreen-preview');
+  if (el) el.innerHTML = `<img src="${blobUrl}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--pink)" />`;
+}
+
+// Upload new mainscreen.webp to GitHub
+async function uploadMainscreen() {
+  const fileInput = byId('mainscreen-upload');
+  const status    = byId('mainscreen-status');
+  const file      = fileInput.files[0];
+
+  if (!file) { status.textContent = 'Please select a file'; return; }
+
+  if (!GITHUB_TOKEN) {
+    const token = prompt('Enter your GitHub Personal Access Token:');
+    if (!token) return;
+    GITHUB_TOKEN = token.trim();
+    localStorage.setItem('emmiti_github_token', GITHUB_TOKEN);
+  }
+
+  status.textContent = 'Uploading...';
+
+  try {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const content = e.target.result.split(',')[1];
+
+      // Get current SHA of mainscreen.webp so we can overwrite it
+      let sha = null;
+      try {
+        const getRes = await fetch(
+          `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/photos/mainscreen.webp`,
+          { headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } }
+        );
+        if (getRes.ok) sha = (await getRes.json()).sha;
+      } catch(e) {}
+
+      const body = { message: 'Update mainscreen photo', content };
+      if (sha) body.sha = sha;
+
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/photos/mainscreen.webp`,
+        { method: 'PUT', headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' }, body: JSON.stringify(body) }
+      );
+
+      if (res.ok) {
+        status.textContent = '✅ Uploaded! Live in ~1 min.';
+        status.style.color = 'var(--gold)';
+        fileInput.value = '';
+        setTimeout(() => status.textContent = '', 4000);
+      } else {
+        const d = await res.json();
+        throw new Error(d.message || 'Upload failed');
+      }
+    };
+    reader.readAsDataURL(file);
+  } catch(err) {
+    status.textContent = `❌ ${err.message}`;
+    status.style.color = 'var(--pink)';
+    if (err.message.includes('Bad credentials') || err.message.includes('Unauthorized')) {
+      localStorage.removeItem('emmiti_github_token');
+      GITHUB_TOKEN = '';
+    }
   }
 }
 
