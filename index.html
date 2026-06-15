@@ -641,8 +641,8 @@
     /* Hero Banner */
     .hero-banner {
       width: 100%;
-      height: 560px;
-      background-color: #000;
+      height: 450px;
+      background-color: var(--bg);
       position: relative;
       display: flex;
       align-items: flex-end;
@@ -651,11 +651,42 @@
     }
 
     .hero-banner::before {
-      content: none;
+      content: '';
+      position: absolute;
+      inset: -15%;
+      background-image: url('photos/image.webp');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.7) saturate(0.9);
+      opacity: 0.85;
+      animation: neonPulse 6s ease-in-out infinite, neonFloat 20s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes neonPulse {
+      0%, 100% { opacity: 0.8; filter: brightness(0.7) saturate(0.9) hue-rotate(0deg); }
+      50%       { opacity: 0.9; filter: brightness(0.85) saturate(1.1) hue-rotate(30deg); }
+    }
+
+    @keyframes neonFloat {
+      0%   { transform: translate(0, 0) scale(1.15); }
+      25%  { transform: translate(-3%, 2%) scale(1.18); }
+      50%  { transform: translate(0, 4%) scale(1.15); }
+      75%  { transform: translate(3%, 1%) scale(1.18); }
+      100% { transform: translate(0, 0) scale(1.15); }
     }
 
     .hero-banner::after {
-      content: none;
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('photos/mainscreen.webp');
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
+      z-index: 2;
+      mask-image: radial-gradient(ellipse 80% 85% at center, black 40%, rgba(0,0,0,0.8) 70%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 85% at center, black 40%, rgba(0,0,0,0.8) 70%, transparent 100%);
     }
 
     .hero-video {
@@ -2149,8 +2180,15 @@ function renderHome(lensFilter = null) {
   main.innerHTML = html;
 }
 
+function trackView(id) {
+  const allViews = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+  allViews[id] = (allViews[id] || 0) + 1;
+  localStorage.setItem('emmiti_all_views', JSON.stringify(allViews));
+}
+
 function renderPost(id) {
   hideGalleries();
+  trackView(id);
   const p = posts.find(x => x.id === id);
   if (!p) {
     renderHome();
@@ -2256,16 +2294,23 @@ function renderAdmin() {
     return;
   }
 
+  const allViews = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+  const totalViews = Object.values(allViews).reduce((a, b) => a + b, 0);
+
   let postListHtml = '';
   if (posts.length === 0) {
     postListHtml = '<p class="form-hint">No posts yet.</p>';
   } else {
     posts.forEach((p, i) => {
+      const views = allViews[p.id] || 0;
       postListHtml += `
         <div class="post-item">
           <div>
             <div class="title-text">${p.title}</div>
-            <div class="form-hint">${p.date || ''}</div>
+            <div class="form-hint" style="display:flex;gap:1rem;margin-top:0.2rem">
+              <span>${p.date || ''}</span>
+              <span style="color:var(--gold)">👁 ${views} view${views !== 1 ? 's' : ''}</span>
+            </div>
           </div>
           <div class="controls">
             <button class="btn btn-secondary btn-sm" onclick="editPost('${p.id}')">Edit</button>
@@ -2339,6 +2384,16 @@ function renderAdmin() {
 
         <div class="card">
           <h3>Posts</h3>
+          <div style="display:flex;gap:0.75rem;margin-bottom:1rem">
+            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
+              <div style="font-size:1.8rem;font-weight:700;color:var(--gold)">${totalViews}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted)">Total Views</div>
+            </div>
+            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
+              <div style="font-size:1.8rem;font-weight:700;color:var(--pink)">${posts.length}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted)">Total Posts</div>
+            </div>
+          </div>
           <div class="card-subtitle">Manage your posts</div>
           <div id="admin-list">${postListHtml}</div>
           <hr>
