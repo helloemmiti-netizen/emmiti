@@ -525,12 +525,10 @@
     }
 
     #logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
       background: #050508;
-      border: 2px solid transparent;
-      background-clip: padding-box;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -540,12 +538,12 @@
         0 0 20px rgba(255,20,147,0.6),
         0 0 40px rgba(0,212,255,0.3);
       animation: logoPulse 3s ease-in-out infinite;
-      overflow: visible;
+      overflow: hidden;
     }
     #logo svg {
-      width: 30px;
-      height: 30px;
-      filter: drop-shadow(0 0 6px #FFD700);
+      width: 56px;
+      height: 56px;
+      filter: drop-shadow(0 0 8px #FFD700);
     }
 
     @keyframes logoPulse {
@@ -1607,23 +1605,20 @@
                   <stop offset="100%" stop-color="#00D4FF"/>
                 </linearGradient>
               </defs>
-              <!-- Film strip holes top -->
-              <rect x="8"  y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="22" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="36" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="50" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="64" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="78" y="4" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <!-- Film strip holes bottom -->
-              <rect x="8"  y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="22" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="36" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="50" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="64" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <rect x="78" y="90" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.25)"/>
-              <!-- Bold E -->
-              <text x="50" y="76"
-                font-size="72"
+              <rect x="6"  y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="20" y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="34" y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="48" y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="62" y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="76" y="3" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="6"  y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="20" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="34" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="48" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="62" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <rect x="76" y="91" width="8" height="6" rx="1.5" fill="rgba(255,255,255,0.2)"/>
+              <text x="50" y="78"
+                font-size="78"
                 font-family="Georgia, serif"
                 font-weight="700"
                 text-anchor="middle"
@@ -1700,7 +1695,7 @@
 // >>> CHANGE THIS to your own private word. It is the only gate on the admin panel.
 // Note: anyone who views page source can read this, so it deters casual access only,
 // it is NOT real security. Keep it non-obvious and don't reuse a real password.
-const ADMIN_PASS = 'Rohan@612';
+const ADMIN_PASS = 'emmiti-change-me-7Qx';
 const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
 const POSTS_JSON_URL = 'posts.json';
 const POSTS_JSON_FALLBACK = 'https://raw.githubusercontent.com/helloemmiti-netizen/emmiti/main/posts.json';
