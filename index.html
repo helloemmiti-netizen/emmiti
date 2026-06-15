@@ -641,11 +641,11 @@
     /* Hero Banner */
     .hero-banner {
       width: 100%;
-      height: 480px;
+      height: 600px;
       background-color: #050508;
       position: relative;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       overflow: hidden;
     }
@@ -654,8 +654,12 @@
       content: '';
       position: absolute;
       inset: 0;
+      background: #050508;
       z-index: 1;
-      background: linear-gradient(135deg, #080010 0%, #05050a 50%, #000810 100%);
+    }
+      33%  { filter: brightness(0.72) saturate(1.4) hue-rotate(18deg); }
+      66%  { filter: brightness(0.68) saturate(1.3) hue-rotate(-12deg); }
+      100% { filter: brightness(0.65) saturate(1.2) hue-rotate(0deg); }
     }
       25%  { transform: translateX(8%)  scale(1.02); }
       50%  { transform: translateX(12%) scale(1.0); }
@@ -699,9 +703,6 @@
         rgba(5,5,8,0.9) 100%);
       z-index: 2;
     }
-
-    @keyframes neonPulse {
-      0%, 100% { opacity: 0.8; }
       50%       { opacity: 0.9; }
     }
     @keyframes neonFloat {
@@ -2072,7 +2073,7 @@ function hideGalleries() {
 function renderHome(lensFilter = null) {
   showGalleries();
   metaHome();
-  setTimeout(initHeroDoodle, 80);
+  setTimeout(initHeroDoodle, 100);
   currentLensFilter = lensFilter;
   const main = byId('main-content');
 
@@ -2644,73 +2645,66 @@ function initHeroDoodle() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const COLORS = ['#FF1493','#00D4FF','#FFD700','#CC44FF','#FF69B4','#00FFCC','#FF4500','#39FF14'];
-  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const pick = a => a[Math.floor(Math.random()*a.length)];
   const rnd  = (a,b) => a + Math.random()*(b-a);
   const TYPES = ['heart','star','circle','diamond','line','arc','zigzag','drop'];
-  let doodles = [], animId;
+  let doodles=[], animId;
 
-  function generate(W, H) {
-    doodles = [];
-    for (let i = 0; i < 40; i++) {
-      const side = i % 2 === 0 ? 'left' : 'right';
-      const x = side === 'left' ? rnd(W*0.01, W*0.26) : rnd(W*0.74, W*0.99);
-      doodles.push({
-        type: pick(TYPES), color: pick(COLORS),
-        x, y: rnd(H*0.03, H*0.97),
-        size: rnd(12,50), rot: rnd(0,Math.PI*2),
-        lw: rnd(2,4), phase: rnd(0,Math.PI*2)
-      });
+  function generate(W,H) {
+    doodles=[];
+    for(let i=0;i<44;i++){
+      const side = i%2===0?'left':'right';
+      const x = side==='left' ? rnd(W*0.01,W*0.24) : rnd(W*0.76,W*0.99);
+      doodles.push({type:pick(TYPES),color:pick(COLORS),x,y:rnd(H*0.02,H*0.98),size:rnd(14,54),rot:rnd(0,Math.PI*2),lw:rnd(2,4.5),phase:rnd(0,Math.PI*2)});
     }
   }
 
-  function heart(ctx,s){ const h=s*0.5; ctx.beginPath(); ctx.moveTo(0,h*0.4); ctx.bezierCurveTo(-h,-h*0.6,-h*2,h*0.6,0,h*1.4); ctx.bezierCurveTo(h*2,h*0.6,h,-h*0.6,0,h*0.4); ctx.stroke(); }
-  function star(ctx,s){ const o=s*0.5,i=s*0.22; ctx.beginPath(); for(let k=0;k<10;k++){const r=k%2?i:o,a=k*Math.PI/5-Math.PI/2; k?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);} ctx.closePath(); ctx.stroke(); }
+  function heart(ctx,s){const h=s*0.5;ctx.beginPath();ctx.moveTo(0,h*0.4);ctx.bezierCurveTo(-h,-h*0.6,-h*2,h*0.6,0,h*1.4);ctx.bezierCurveTo(h*2,h*0.6,h,-h*0.6,0,h*0.4);ctx.stroke();}
+  function star(ctx,s){const o=s*0.5,i=s*0.22;ctx.beginPath();for(let k=0;k<10;k++){const r=k%2?i:o,a=k*Math.PI/5-Math.PI/2;k?ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r):ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r);}ctx.closePath();ctx.stroke();}
 
-  function drawOne(ctx, d, t) {
-    const pulse = 0.88 + 0.12*Math.sin(t*0.0015+d.phase);
-    const alpha = 0.5  + 0.4 *Math.sin(t*0.001 +d.phase);
-    const sz = d.size * pulse;
+  function drawOne(ctx,d,t){
+    const pulse=0.85+0.15*Math.sin(t*0.0012+d.phase);
+    const alpha=0.55+0.4*Math.sin(t*0.0008+d.phase);
+    const sz=d.size*pulse;
     ctx.save();
-    ctx.translate(d.x, d.y);
-    ctx.rotate(d.rot + t*0.0003);
-    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
-    ctx.strokeStyle = d.color;
-    ctx.lineWidth   = d.lw;
-    ctx.shadowColor = d.color;
-    ctx.shadowBlur  = sz * 1.2;
+    ctx.translate(d.x,d.y);
+    ctx.rotate(d.rot+t*0.00025);
+    ctx.globalAlpha=Math.max(0.1,Math.min(1,alpha));
+    ctx.strokeStyle=d.color;
+    ctx.lineWidth=d.lw;
+    ctx.shadowColor=d.color;
+    ctx.shadowBlur=sz*1.4;
     switch(d.type){
       case 'heart':   heart(ctx,sz); break;
       case 'star':    star(ctx,sz);  break;
-      case 'circle':  ctx.beginPath(); ctx.arc(0,0,sz*0.45,0,Math.PI*2); ctx.stroke(); break;
-      case 'diamond': ctx.beginPath(); ctx.moveTo(0,-sz*0.5); ctx.lineTo(sz*0.35,0); ctx.lineTo(0,sz*0.5); ctx.lineTo(-sz*0.35,0); ctx.closePath(); ctx.stroke(); break;
-      case 'line':    ctx.beginPath(); ctx.moveTo(-sz*0.5,0); ctx.lineTo(sz*0.5,0); ctx.stroke(); break;
-      case 'arc':     ctx.beginPath(); ctx.arc(0,0,sz*0.4,0,Math.PI*1.4); ctx.stroke(); break;
-      case 'zigzag':  ctx.beginPath(); ctx.moveTo(-sz*0.5,0); ctx.lineTo(-sz*0.15,-sz*0.35); ctx.lineTo(sz*0.15,sz*0.35); ctx.lineTo(sz*0.5,0); ctx.stroke(); break;
-      case 'drop':    ctx.beginPath(); ctx.arc(0,sz*0.15,sz*0.28,0,Math.PI*2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,-sz*0.1); ctx.lineTo(0,-sz*0.5); ctx.stroke(); break;
+      case 'circle':  ctx.beginPath();ctx.arc(0,0,sz*0.45,0,Math.PI*2);ctx.stroke(); break;
+      case 'diamond': ctx.beginPath();ctx.moveTo(0,-sz*0.5);ctx.lineTo(sz*0.35,0);ctx.lineTo(0,sz*0.5);ctx.lineTo(-sz*0.35,0);ctx.closePath();ctx.stroke(); break;
+      case 'line':    ctx.beginPath();ctx.moveTo(-sz*0.5,0);ctx.lineTo(sz*0.5,0);ctx.stroke(); break;
+      case 'arc':     ctx.beginPath();ctx.arc(0,0,sz*0.4,0,Math.PI*1.4);ctx.stroke(); break;
+      case 'zigzag':  ctx.beginPath();ctx.moveTo(-sz*0.5,0);ctx.lineTo(-sz*0.15,-sz*0.35);ctx.lineTo(sz*0.15,sz*0.35);ctx.lineTo(sz*0.5,0);ctx.stroke(); break;
+      case 'drop':    ctx.beginPath();ctx.arc(0,sz*0.15,sz*0.28,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(0,-sz*0.1);ctx.lineTo(0,-sz*0.5);ctx.stroke(); break;
     }
     ctx.restore();
   }
 
-  function tick(t) {
-    const W=canvas.width, H=canvas.height;
+  function tick(t){
+    const W=canvas.width,H=canvas.height;
     ctx.clearRect(0,0,W,H);
-    // dark bg
-    const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#080012'); g.addColorStop(0.5,'#050508'); g.addColorStop(1,'#000810');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#050508';
+    ctx.fillRect(0,0,W,H);
     for(const d of doodles) drawOne(ctx,d,t);
-    animId = requestAnimationFrame(tick);
+    animId=requestAnimationFrame(tick);
   }
 
   function resize(){
     cancelAnimationFrame(animId);
-    canvas.width  = canvas.offsetWidth  || canvas.parentElement.offsetWidth;
-    canvas.height = canvas.offsetHeight || canvas.parentElement.offsetHeight;
-    generate(canvas.width, canvas.height);
-    animId = requestAnimationFrame(tick);
+    canvas.width  = canvas.offsetWidth  || canvas.parentElement.clientWidth  || 800;
+    canvas.height = canvas.offsetHeight || canvas.parentElement.clientHeight || 600;
+    generate(canvas.width,canvas.height);
+    animId=requestAnimationFrame(tick);
   }
 
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize',resize);
   resize();
 }
 
@@ -2916,7 +2910,7 @@ window.addEventListener('load', async () => {
   await initPosts();
   initPhotoGalleries();
   router();
-  setTimeout(initHeroDoodle, 80);
+  setTimeout(initHeroDoodle, 100);
 await initPosts();
 initPhotoGalleries();
 router();
