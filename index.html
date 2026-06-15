@@ -2628,7 +2628,7 @@ const EmmitiFX = (() => {
 
   return { celebrate, launchAt, setEnabled, _disabled: false };
 })();
-
+window.addEventListener('hashchange', router);
 window.addEventListener('load', async () => {
   loadTheme();
   const yr = byId('copyright-year'); if (yr) yr.textContent = new Date().getFullYear();
