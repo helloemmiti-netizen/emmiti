@@ -655,7 +655,7 @@
       position: absolute;
       inset: 0;
       background: #050508;
-      z-index: 1;
+      z-index: 0;
     }
       33%  { filter: brightness(0.72) saturate(1.4) hue-rotate(18deg); }
       66%  { filter: brightness(0.68) saturate(1.3) hue-rotate(-12deg); }
@@ -2058,7 +2058,7 @@ function renderHome(lensFilter = null) {
   }
 
   let html = `
-    <div class="hero-banner"><canvas id="hero-doodle" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block;"></canvas></div>
+    <div class="hero-banner"><canvas id="hero-doodle" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;"></canvas></div>
     </div>
     <main>
       <!-- Decorative particles - massively increased -->
@@ -2660,8 +2660,6 @@ function initHeroDoodle() {
   function tick(t){
     const W=canvas.width,H=canvas.height;
     ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='#050508';
-    ctx.fillRect(0,0,W,H);
     for(const d of doodles) drawOne(ctx,d,t);
     animId=requestAnimationFrame(tick);
   }
