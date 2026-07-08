@@ -1195,14 +1195,6 @@
     }
 
     @media (max-width: 768px) {
-      /* Mobile: drop the side film-strips entirely, go full-width */
-      .side-gallery {
-        display: none !important;
-      }
-      .center-content {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-      }
       header {
         padding: 0.75rem 1rem;
       }
@@ -1740,15 +1732,9 @@ function initPhotoGalleries() {
   const leftPhotos = byId('left-photos');
   const rightPhotos = byId('right-photos');
 
-  // On mobile the side galleries are hidden — skip loading any images entirely
   const isMobile = window.innerWidth <= 768;
-  if (isMobile) {
-    if (leftPhotos)  leftPhotos.innerHTML  = '';
-    if (rightPhotos) rightPhotos.innerHTML = '';
-    return;
-  }
-
-  const photoCount = GALLERY_PHOTOS.length;
+  // Mobile shows fewer photos; both use lightweight webp thumbnails
+  const photoCount = isMobile ? 12 : GALLERY_PHOTOS.length;
 
   // Split photos between left and right
   const shuffled = [...GALLERY_PHOTOS].sort(() => Math.random() - 0.5).slice(0, photoCount);
@@ -1757,10 +1743,13 @@ function initPhotoGalleries() {
   const rightSet = shuffled.slice(half);
 
   // Duplicate for infinite scroll effect
+  // Convert 'photos/Name.jpeg' -> 'thumbs/Name.webp' (76% smaller, sharp at gallery size)
+  const toThumb = src => 'thumbs/' + src.replace(/^photos\//, '').replace(/\.(jpe?g|png)$/i, '.webp');
+
   const createPhotoStrip = (photos, container) => {
-    const doubled = [...photos, ...photos, ...photos]; // Triple for smooth loop
+    const doubled = [...photos, ...photos]; // Double is enough for a smooth loop
     container.innerHTML = doubled.map(src =>
-      `<img class="wall-photo" src="${src}" alt="Gallery photo" loading="lazy" decoding="async" onerror="this.style.display='none'">`
+      `<img class="wall-photo" src="${toThumb(src)}" alt="Gallery photo" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='${src}'">`
     ).join('');
   };
 
