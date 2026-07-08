@@ -2129,8 +2129,17 @@ function renderHome(lensFilter = null) {
   main.innerHTML = html;
 }
 
+function trackView(id) {
+  try {
+    const v = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+    v[id] = (v[id] || 0) + 1;
+    localStorage.setItem('emmiti_all_views', JSON.stringify(v));
+  } catch(e) {}
+}
+
 function renderPost(id) {
   hideGalleries();
+  trackView(id);
   const p = posts.find(x => x.id === id);
   if (!p) {
     renderHome();
@@ -2241,11 +2250,15 @@ function renderAdmin() {
     postListHtml = '<p class="form-hint">No posts yet.</p>';
   } else {
     posts.forEach((p, i) => {
+      const views = allViews[p.id] || 0;
       postListHtml += `
         <div class="post-item">
           <div>
             <div class="title-text">${p.title}</div>
-            <div class="form-hint">${p.date || ''}</div>
+            <div class="form-hint" style="display:flex;gap:1rem;margin-top:0.25rem">
+              <span>${p.date || ''}</span>
+              <span style="color:var(--gold)">👁 ${views} view${views !== 1 ? 's' : ''}</span>
+            </div>
           </div>
           <div class="controls">
             <button class="btn btn-secondary btn-sm" onclick="editPost('${p.id}')">Edit</button>
@@ -2319,6 +2332,16 @@ function renderAdmin() {
 
         <div class="card">
           <h3>Posts</h3>
+          <div style="display:flex;gap:0.75rem;margin:0.5rem 0 1rem">
+            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
+              <div style="font-size:1.8rem;font-weight:700;color:var(--gold)">${totalViews}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted)">Total Views</div>
+            </div>
+            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
+              <div style="font-size:1.8rem;font-weight:700;color:var(--pink)">${posts.length}</div>
+              <div style="font-size:0.72rem;color:var(--text-muted)">Total Posts</div>
+            </div>
+          </div>
           <div class="card-subtitle">Manage your posts</div>
           <div id="admin-list">${postListHtml}</div>
           <hr>
