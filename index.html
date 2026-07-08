@@ -2222,6 +2222,64 @@ function renderAbout() {
   `;
 }
 
+function buildMetricsHTML() {
+  const allViews = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+  const totalViews = Object.values(allViews).reduce((a,b)=>a+b,0);
+  // rank posts by views desc
+  const ranked = posts.map(p => ({
+    ...p,
+    views: allViews[p.id] || 0,
+    readTime: calculateReadingTime(p.content)
+  })).sort((a,b) => b.views - a.views);
+  const maxViews = Math.max(1, ...ranked.map(r => r.views));
+
+  const lensCount = { craft: 0, life: 0, none: 0 };
+  posts.forEach(p => { lensCount[p.lens || 'none']++; });
+
+  let rows = ranked.map((p, i) => {
+    const pct = Math.round((p.views / maxViews) * 100);
+    const lensLabel = p.lens === 'craft' ? 'Craft' : (p.lens === 'life' ? 'Life' : '—');
+    const lensColor = p.lens === 'craft' ? '#00ff00' : (p.lens === 'life' ? '#00d4ff' : 'var(--text-muted)');
+    return `
+      <div style="padding:0.75rem 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;margin-bottom:0.4rem">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">#${i+1} ${p.title}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.15rem">
+              <span style="color:${lensColor}">${lensLabel}</span> &middot; ${p.date||''} &middot; ${p.readTime} min read
+            </div>
+          </div>
+          <div style="text-align:right;white-space:nowrap">
+            <div style="font-size:1.1rem;font-weight:700;color:var(--gold)">${p.views}</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">views</div>
+          </div>
+        </div>
+        <div style="height:6px;background:var(--bg-tertiary);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--pink),var(--gold));border-radius:3px"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.25rem">
+      <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem;flex:1;text-align:center">
+        <div style="font-size:1.6rem;font-weight:700;color:var(--gold)">${totalViews}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted)">Total Views</div>
+      </div>
+      <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem;flex:1;text-align:center">
+        <div style="font-size:1.6rem;font-weight:700;color:var(--pink)">${posts.length}</div>
+        <div style="font-size:0.68rem;color:var(--text-muted)">Posts</div>
+      </div>
+      <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem;flex:1;text-align:center">
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text)"><span style=\"color:#00d4ff\">${lensCount.life}</span> / <span style=\"color:#00ff00\">${lensCount.craft}</span></div>
+        <div style="font-size:0.68rem;color:var(--text-muted)">Life / Craft</div>
+      </div>
+    </div>
+    <div>${rows}</div>
+    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.75rem;line-height:1.4">Counts are stored in this browser. They reflect views on this device. For all-visitor analytics, a backend counter is needed.</div>
+  `;
+}
+
 function renderAdmin() {
   hideGalleries();
   const main = byId('main-content');
@@ -2250,15 +2308,11 @@ function renderAdmin() {
     postListHtml = '<p class="form-hint">No posts yet.</p>';
   } else {
     posts.forEach((p, i) => {
-      const views = allViews[p.id] || 0;
       postListHtml += `
         <div class="post-item">
           <div>
             <div class="title-text">${p.title}</div>
-            <div class="form-hint" style="display:flex;gap:1rem;margin-top:0.25rem">
-              <span>${p.date || ''}</span>
-              <span style="color:var(--gold)">👁 ${views} view${views !== 1 ? 's' : ''}</span>
-            </div>
+            <div class="form-hint">${p.date || ''}</div>
           </div>
           <div class="controls">
             <button class="btn btn-secondary btn-sm" onclick="editPost('${p.id}')">Edit</button>
@@ -2271,6 +2325,13 @@ function renderAdmin() {
 
   main.innerHTML = `
     <main>
+      <div style="margin-bottom:2rem">
+        <div class="card">
+          <h3>📊 Post Metrics</h3>
+          <div class="card-subtitle">Views per post, ranked</div>
+          <div id="metrics-panel">${buildMetricsHTML()}</div>
+        </div>
+      </div>
       <div class="admin-section">
         <div class="card">
           <h3 id="form-title">Create Post</h3>
@@ -2332,16 +2393,6 @@ function renderAdmin() {
 
         <div class="card">
           <h3>Posts</h3>
-          <div style="display:flex;gap:0.75rem;margin:0.5rem 0 1rem">
-            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
-              <div style="font-size:1.8rem;font-weight:700;color:var(--gold)">${totalViews}</div>
-              <div style="font-size:0.72rem;color:var(--text-muted)">Total Views</div>
-            </div>
-            <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;flex:1;text-align:center">
-              <div style="font-size:1.8rem;font-weight:700;color:var(--pink)">${posts.length}</div>
-              <div style="font-size:0.72rem;color:var(--text-muted)">Total Posts</div>
-            </div>
-          </div>
           <div class="card-subtitle">Manage your posts</div>
           <div id="admin-list">${postListHtml}</div>
           <hr>
