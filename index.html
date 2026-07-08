@@ -423,7 +423,6 @@
       gap: 20px;
       padding: 20px 15px;
       animation: scrollPhotos 60s linear infinite;
-      will-change: transform;
     }
 
     .left-gallery .photo-strip {
@@ -448,11 +447,9 @@
       width: 100%;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease;
+      transition: all 0.4s ease;
       cursor: pointer;
       position: relative;
-      will-change: transform;
-      backface-visibility: hidden;
     }
 
     .wall-photo:hover {
@@ -1198,6 +1195,14 @@
     }
 
     @media (max-width: 768px) {
+      /* Mobile: drop the side film-strips entirely, go full-width */
+      .side-gallery {
+        display: none !important;
+      }
+      .center-content {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+      }
       header {
         padding: 0.75rem 1rem;
       }
@@ -1735,9 +1740,15 @@ function initPhotoGalleries() {
   const leftPhotos = byId('left-photos');
   const rightPhotos = byId('right-photos');
 
-  // Reduce photos on mobile for faster loading
+  // On mobile the side galleries are hidden — skip loading any images entirely
   const isMobile = window.innerWidth <= 768;
-  const photoCount = isMobile ? 5 : GALLERY_PHOTOS.length;
+  if (isMobile) {
+    if (leftPhotos)  leftPhotos.innerHTML  = '';
+    if (rightPhotos) rightPhotos.innerHTML = '';
+    return;
+  }
+
+  const photoCount = GALLERY_PHOTOS.length;
 
   // Split photos between left and right
   const shuffled = [...GALLERY_PHOTOS].sort(() => Math.random() - 0.5).slice(0, photoCount);
@@ -1747,7 +1758,7 @@ function initPhotoGalleries() {
 
   // Duplicate for infinite scroll effect
   const createPhotoStrip = (photos, container) => {
-    const doubled = [...photos, ...photos]; // Triple for smooth loop
+    const doubled = [...photos, ...photos, ...photos]; // Triple for smooth loop
     container.innerHTML = doubled.map(src =>
       `<img class="wall-photo" src="${src}" alt="Gallery photo" loading="lazy" decoding="async" onerror="this.style.display='none'">`
     ).join('');
@@ -2611,8 +2622,7 @@ function initHeroDoodle() {
 
   function generate(W,H) {
     doodles=[];
-    const doodleCount = window.innerWidth <= 768 ? 20 : 44;
-    for(let i=0;i<doodleCount;i++){
+    for(let i=0;i<44;i++){
       const side = i%2===0?'left':'right';
       const x = side==='left' ? rnd(W*0.01,W*0.24) : rnd(W*0.76,W*0.99);
       doodles.push({type:pick(TYPES),color:pick(COLORS),x,y:rnd(H*0.02,H*0.98),size:rnd(14,54),rot:rnd(0,Math.PI*2),lw:rnd(2,4.5),phase:rnd(0,Math.PI*2)});
