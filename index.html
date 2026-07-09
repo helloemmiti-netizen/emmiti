@@ -2001,22 +2001,43 @@ async function submitSuggestion(e) {
 
   if (status) status.textContent = 'Sending...';
 
+  // Try FormSubmit AJAX. It fails silently if the email isn't activated yet,
+  // so we always give the user a working mailto fallback if anything goes wrong.
+  let sent = false;
   try {
     const res = await fetch('https://formsubmit.co/ajax/' + SUGGESTION_EMAIL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ message: text, _subject: 'Emmiti suggestion', _captcha: 'false' })
+      body: JSON.stringify({
+        message: text,
+        _subject: 'New Emmiti suggestion',
+        _template: 'table',
+        _captcha: 'false'
+      })
     });
-
     if (res.ok) {
-      if (status) status.textContent = 'Sent! Thank you.';
-      ta.value = '';
-    } else {
-      throw new Error('Failed');
+      const data = await res.json().catch(() => ({}));
+      // FormSubmit returns { success: "true"/true } on real delivery
+      if (data.success === true || data.success === 'true') {
+        sent = true;
+      }
     }
   } catch (err) {
-    if (status) status.textContent = 'Failed. Try email instead.';
-    window.location.href = `mailto:${SUGGESTION_EMAIL}?subject=Emmiti%20Suggestion&body=${encodeURIComponent(text)}`;
+    // network / CORS / not-activated — fall through to mailto
+  }
+
+  if (sent) {
+    if (status) status.textContent = 'Sent! Thank you.';
+    ta.value = '';
+  } else {
+    // Reliable fallback: open the user's mail app with the text prefilled
+    if (status) {
+      status.innerHTML = 'Opening your email app… <a href="mailto:' + SUGGESTION_EMAIL +
+        '?subject=Emmiti%20Suggestion&body=' + encodeURIComponent(text) +
+        '" style="color:var(--pink)">or click here</a>';
+    }
+    window.location.href = 'mailto:' + SUGGESTION_EMAIL +
+      '?subject=Emmiti%20Suggestion&body=' + encodeURIComponent(text);
   }
 
   return false;
