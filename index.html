@@ -1661,6 +1661,7 @@
 const ADMIN_PASS = 'Rohan@612';
 const SUGGESTION_EMAIL = 'helloemmiti@gmail.com';
 const POSTS_JSON_URL = 'posts.json';
+const WORKER_URL = 'https://emmiti-counter.helloemmiti.workers.dev';
 const POSTS_JSON_FALLBACK = 'https://raw.githubusercontent.com/helloemmiti-netizen/emmiti/main/posts.json';
 const GITHUB_OWNER = 'helloemmiti-netizen';
 const GITHUB_REPO = 'emmiti';
@@ -2001,38 +2002,28 @@ async function submitSuggestion(e) {
 
   if (status) status.textContent = 'Sending...';
 
-  // Try FormSubmit AJAX. It fails silently if the email isn't activated yet,
-  // so we always give the user a working mailto fallback if anything goes wrong.
+  // Primary: save to the Cloudflare Worker (shows up in admin, no email needed)
   let sent = false;
   try {
-    const res = await fetch('https://formsubmit.co/ajax/' + SUGGESTION_EMAIL, {
+    const res = await fetch(WORKER_URL + '/suggest', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        _subject: 'New Emmiti suggestion',
-        _template: 'table',
-        _captcha: 'false'
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
     });
     if (res.ok) {
       const data = await res.json().catch(() => ({}));
-      // FormSubmit returns { success: "true"/true } on real delivery
-      if (data.success === true || data.success === 'true') {
-        sent = true;
-      }
+      if (data.success) sent = true;
     }
   } catch (err) {
-    // network / CORS / not-activated — fall through to mailto
+    // Worker unreachable — fall through to mailto
   }
 
   if (sent) {
     if (status) status.textContent = 'Sent! Thank you.';
     ta.value = '';
   } else {
-    // Reliable fallback: open the user's mail app with the text prefilled
     if (status) {
-      status.innerHTML = 'Opening your email app… <a href="mailto:' + SUGGESTION_EMAIL +
+      status.innerHTML = 'Opening your email app\u2026 <a href="mailto:' + SUGGESTION_EMAIL +
         '?subject=Emmiti%20Suggestion&body=' + encodeURIComponent(text) +
         '" style="color:var(--pink)">or click here</a>';
     }
@@ -2041,6 +2032,31 @@ async function submitSuggestion(e) {
   }
 
   return false;
+}
+
+async function refreshSuggestionsPanel() {
+  const panel = byId('suggestions-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch(WORKER_URL + '/suggestions?key=' + encodeURIComponent(ADMIN_PASS), { cache: 'no-cache' });
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    const items = data.suggestions || [];
+    if (items.length === 0) {
+      panel.innerHTML = '<p class="form-hint">No suggestions yet.</p>';
+      return;
+    }
+    panel.innerHTML = items.map(s => {
+      const d = s.date ? new Date(s.date).toLocaleString() : '';
+      return `
+        <div style="padding:0.9rem 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:0.95rem;line-height:1.6;white-space:pre-wrap">${(s.message||'').replace(/</g,'&lt;')}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.4rem">${d}</div>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    panel.innerHTML = '<p class="form-hint">Could not load suggestions right now.</p>';
+  }
 }
 
 // ============================================
@@ -2151,6 +2167,9 @@ function renderHome(lensFilter = null) {
 }
 
 function trackView(id) {
+  // Real all-visitor count via Cloudflare Worker
+  fetch(WORKER_URL + '/?id=' + encodeURIComponent(id) + '&hit=1').catch(() => {});
+  // Local fallback so admin metrics still show something if the Worker is ever unreachable
   try {
     const v = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
     v[id] = (v[id] || 0) + 1;
@@ -2243,10 +2262,24 @@ function renderAbout() {
   `;
 }
 
-function buildMetricsHTML() {
-  const allViews = JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+async function getAllViews() {
+  // Real all-visitor counts from the Worker, with localStorage as fallback
+  try {
+    const res = await fetch(WORKER_URL + '/all', { cache: 'no-cache' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && typeof data === 'object') return data;
+    }
+  } catch (e) {}
+  try {
+    return JSON.parse(localStorage.getItem('emmiti_all_views') || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function renderMetricsRows(allViews) {
   const totalViews = Object.values(allViews).reduce((a,b)=>a+b,0);
-  // rank posts by views desc
   const ranked = posts.map(p => ({
     ...p,
     views: allViews[p.id] || 0,
@@ -2292,13 +2325,26 @@ function buildMetricsHTML() {
         <div style="font-size:0.68rem;color:var(--text-muted)">Posts</div>
       </div>
       <div style="background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:0.75rem;flex:1;text-align:center">
-        <div style="font-size:0.95rem;font-weight:700;color:var(--text)"><span style=\"color:#00d4ff\">${lensCount.life}</span> / <span style=\"color:#00ff00\">${lensCount.craft}</span></div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text)"><span style="color:#00d4ff">${lensCount.life}</span> / <span style="color:#00ff00">${lensCount.craft}</span></div>
         <div style="font-size:0.68rem;color:var(--text-muted)">Life / Craft</div>
       </div>
     </div>
     <div>${rows}</div>
-    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.75rem;line-height:1.4">Counts are stored in this browser. They reflect views on this device. For all-visitor analytics, a backend counter is needed.</div>
+    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.75rem;line-height:1.4">Real all-visitor counts, synced from Cloudflare.</div>
   `;
+}
+
+function buildMetricsHTML() {
+  // Synchronous placeholder shown immediately; async refresh below fills in real data
+  const local = (() => { try { return JSON.parse(localStorage.getItem('emmiti_all_views') || '{}'); } catch(e) { return {}; } })();
+  return renderMetricsRows(local);
+}
+
+async function refreshMetricsPanel() {
+  const panel = byId('metrics-panel');
+  if (!panel) return;
+  const allViews = await getAllViews();
+  panel.innerHTML = renderMetricsRows(allViews);
 }
 
 function renderAdmin() {
@@ -2433,8 +2479,18 @@ function renderAdmin() {
         </div>
 
       </div>
+
+      <div class="card" style="margin-top:2rem">
+        <h3>💬 Suggestions</h3>
+        <div class="card-subtitle">Messages from readers, newest first</div>
+        <div id="suggestions-panel"><p class="form-hint">Loading...</p></div>
+      </div>
+
     </main>
   `;
+
+  refreshMetricsPanel();
+  refreshSuggestionsPanel();
 }
 
 function doLogin() {
